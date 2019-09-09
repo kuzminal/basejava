@@ -3,40 +3,42 @@
  */
 public class ArrayStorage {
     Resume[] storage = new Resume[10000];
+    private int size = 0;
 
     void clear() {
-        int size = size();
-        for (int i=0; i < size; i++) {
-            if (storage[i] != null) storage[i] = null;
+        for (int i = 0; i < size; i++) {
+            storage[i] = null;
         }
+        size = 0;
     }
 
     void save(Resume r) {
-        if (get(r.uuid) == null ) //проверят нет ли уже записи с таким же UUID
-            storage[size()] = r;
+        if (get(r.uuid) == null) { //проверят нет ли уже записи с таким же UUID
+            storage[size] = r;
+            size++;
+        }
     }
 
     Resume get(String uuid) {
-        Resume result = null;
-        int size = size();
-        for (int i=0; i < size; i++) {
-            if (storage[i] != null && storage[i].uuid.equals(uuid))
-                result = storage[i];
+        for (int i = 0; i < size; i++) {
+            if (storage[i].uuid.equals(uuid)) {
+                return storage[i];
+            }
         }
-        return result;
+        return null;
     }
 
     void delete(String uuid) {
-        int size = size();
-        for (int i=0; i < size; i++) {
-            if (storage[i] != null && storage[i].uuid.equals(uuid)) {
+        for (int i = 0; i < size; i++) {
+            if (storage[i].uuid.equals(uuid)) {
                 storage[i] = null;
                 for (int j = i + 1; j < size; j++) { // добавил смещение элементов чтобы заполнить пустоту
                     if (storage[j] != null) {                  // все элементы хранятся вначале массива
-                        storage[j-1] = storage[j];
+                        storage[j - 1] = storage[j];
                         storage[j] = null;
                     }
                 }
+                size--; // после смещение уменьшаю размер массива
             }
         }
     }
@@ -46,17 +48,13 @@ public class ArrayStorage {
      */
     Resume[] getAll() {
         Resume[] listResume = new Resume[size()];
-        for (int i=0; i < size(); i++) {
-            if (storage[i] != null) listResume[i] = storage[i];
+        for (int i = 0; i < size; i++) {
+            listResume[i] = storage[i];
         }
         return listResume;
     }
 
     int size() {
-        int size = 0;
-        for (int i=0; i < storage.length; i++) {
-            if (storage[i] != null) size++;
-        }
         return size;
     }
 }
