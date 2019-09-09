@@ -33,7 +33,7 @@ public class ArrayStorage {
             if (storage[i].uuid.equals(uuid)) {
                 /* добавил смещение элементов чтобы заполнить пустоту
                    все элементы хранятся в начале массива */
-                for (int j = i ; j < size - 1; j++) { // теперь i = j и ограничение по size -1
+                for (int j = i; j < size - 1; j++) { // теперь i = j и ограничение по size -1
                     storage[j] = storage[j + 1];      //копирую в текущий элемент значение следующего
                     storage[j + 1] = null;            // обнуляю следующий элемент
                 }
