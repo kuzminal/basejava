@@ -31,12 +31,11 @@ public class ArrayStorage {
     void delete(String uuid) {
         for (int i = 0; i < size; i++) {
             if (storage[i].uuid.equals(uuid)) {
-                storage[i] = null;
-                for (int j = i + 1; j < size; j++) { // добавил смещение элементов чтобы заполнить пустоту
-                    if (storage[j] != null) {                  // все элементы хранятся вначале массива
-                        storage[j - 1] = storage[j];
-                        storage[j] = null;
-                    }
+                /* добавил смещение элементов чтобы заполнить пустоту
+                   все элементы хранятся в начале массива */
+                for (int j = i ; j < size - 1; j++) { // теперь i = j и ограничение по size -1
+                    storage[j] = storage[j + 1];      //копирую в текущий элемент значение следующего
+                    storage[j + 1] = null;            // обнуляю следующий элемент
                 }
                 size--; // после смещение уменьшаю размер массива
             }
