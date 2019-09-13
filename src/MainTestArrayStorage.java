@@ -1,5 +1,8 @@
+import com.kuzmin.model.Resume;
+import com.kuzmin.storage.ArrayStorage;
+
 /**
- * Test for your ArrayStorage implementation
+ * Test for your com.kuzmin.storage.ArrayStorage implementation
  */
 public class MainTestArrayStorage {
     static final ArrayStorage ARRAY_STORAGE = new ArrayStorage();
@@ -24,8 +27,11 @@ public class MainTestArrayStorage {
         printAll();
         ARRAY_STORAGE.delete(r1.uuid);
         printAll();
+        ARRAY_STORAGE.update(r3);
         ARRAY_STORAGE.clear();
         printAll();
+        ARRAY_STORAGE.update(r1);
+
 
         System.out.println("Size: " + ARRAY_STORAGE.size());
     }
