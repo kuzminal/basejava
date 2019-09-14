@@ -1,3 +1,5 @@
+package com.kuzmin;
+
 import com.kuzmin.model.Resume;
 import com.kuzmin.storage.ArrayStorage;
 
@@ -59,7 +61,7 @@ public class MainArray {
         }
     }
 
-    static void printAll() {
+    public static void printAll() {
         Resume[] all = ARRAY_STORAGE.getAll();
         System.out.println("----------------------------");
         if (all.length == 0) {

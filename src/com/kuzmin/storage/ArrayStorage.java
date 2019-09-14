@@ -8,32 +8,32 @@ import java.util.Arrays;
  * Array based storage for Resumes
  */
 public class ArrayStorage {
-    Resume[] storage = new Resume[10_000];
+    private Resume[] storage = new Resume[10_000];
     private int size = 0;
 
     public void clear() {
-        Arrays.fill(storage, 0, size, null); // добавил заполение null из Arrays
+        Arrays.fill(storage, 0, size, null);
         size = 0;
     }
 
     public void save(Resume r) {
-        if (get(r.uuid) == null) { //проверят нет ли уже записи с таким же UUID
+        int index = getElementIndex(r.uuid);
+        if (index != -1){
+            System.out.println("Resume " + r.uuid + " is already exist");
+        }else {
             if (size < storage.length) {  // проверяю не превышен ли размер
                 storage[size] = r;
                 size++;
             }else {
                 System.out.println("Storage is full");
             }
-        }else{
-            System.out.println("Resume " + r.uuid + " is already exist");
         }
     }
 
     public Resume get(String uuid) {
-        for (int i = 0; i < size; i++) {
-            if (storage[i].uuid.equals(uuid)) {
-                return storage[i];
-            }
+        int index = getElementIndex(uuid);
+        if (index != -1){
+            return storage[index];
         }
         System.out.println("Resume " + uuid + " is not present in list");
         return null;
@@ -41,16 +41,13 @@ public class ArrayStorage {
 
     public void delete(String uuid) {
         boolean hasFound = false; // не красиво конечно, но пока так.
-        for (int i = 0; i < size; i++) {
-            if (storage[i].uuid.equals(uuid)) {
-                hasFound = true; // через булеву переменную проверяю найден элемент массива или нет
-                /* убрал смещение и сделал к в лекции */
-                storage[i] = storage[size - 1];
-                storage[size - 1] = null;            // обнуляю последний элемент
-                size--; // после смещение уменьшаю размер массива
-            }
-        }
-        if (!hasFound){
+        int index = getElementIndex(uuid);
+        if (index != -1){
+            storage[index] = storage[size - 1];
+            storage[size - 1] = null;            // обнуляю последний элемент
+            size--; // после смещение уменьшаю размер массива
+        }else
+        {
             System.out.println("Resume " + uuid + " is not found in storage");
         }
     }
@@ -70,15 +67,21 @@ public class ArrayStorage {
      * HW2
      */
     public void update(Resume resume){
-        if (get(resume.uuid) == null){
-            System.out.println("Resume " + resume.uuid + " is not found in storage. Nothing to update");
+        int index = getElementIndex(resume.uuid);
+        if (index != -1){
+            storage[index] = resume;
+            System.out.println("Resume " + resume.uuid + " was updated");
         }else {
-            for (int i = 0; i < size; i++) {
-                if (storage[i].uuid.equals(resume.uuid)) {
-                    storage[i] = resume;
-                    System.out.println("Resume " + resume.uuid + " was updated");
-                }
+            System.out.println("Resume " + resume.uuid + " is not found in storage. Nothing to update");
+        }
+    }
+    // добавил новы метод и везде использую теперь его
+    public int getElementIndex(String uuid){
+        for (int i = 0; i < size; i++) {
+            if (storage[i].uuid.equals(uuid)){
+                return i;
             }
         }
+        return -1;
     }
 }

@@ -1,3 +1,5 @@
+package com.kuzmin;
+
 import com.kuzmin.model.Resume;
 import com.kuzmin.storage.ArrayStorage;
 
@@ -5,7 +7,7 @@ import com.kuzmin.storage.ArrayStorage;
  * Test for your com.kuzmin.storage.ArrayStorage implementation
  */
 public class MainTestArrayStorage {
-    static final ArrayStorage ARRAY_STORAGE = new ArrayStorage();
+    public static final ArrayStorage ARRAY_STORAGE = new ArrayStorage();
 
     public static void main(String[] args) {
         Resume r1 = new Resume();
@@ -36,7 +38,7 @@ public class MainTestArrayStorage {
         System.out.println("Size: " + ARRAY_STORAGE.size());
     }
 
-    static void printAll() {
+    public static void printAll() {
         System.out.println("\nGet All");
         for (Resume r : ARRAY_STORAGE.getAll()) {
             System.out.println(r);
