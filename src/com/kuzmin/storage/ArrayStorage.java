@@ -16,23 +16,23 @@ public class ArrayStorage {
         size = 0;
     }
 
-    public void save(Resume r) {
-        int index = getElementIndex(r.uuid);
-        if (index != -1){
-            System.out.println("Resume " + r.uuid + " is already exist");
-        }else {
-            if (size < storage.length) {  // проверяю не превышен ли размер
-                storage[size] = r;
+    public void save(Resume resume) {
+        int index = getIndex(resume.toString());
+        if (index != -1) {
+            System.out.println("Resume " + resume.toString() + " is already exist");
+        } else {
+            if (size < storage.length) {
+                storage[size] = resume;
                 size++;
-            }else {
+            } else {
                 System.out.println("Storage is full");
             }
         }
     }
 
     public Resume get(String uuid) {
-        int index = getElementIndex(uuid);
-        if (index != -1){
+        int index = getIndex(uuid);
+        if (index != -1) {
             return storage[index];
         }
         System.out.println("Resume " + uuid + " is not present in list");
@@ -40,14 +40,12 @@ public class ArrayStorage {
     }
 
     public void delete(String uuid) {
-        boolean hasFound = false; // не красиво конечно, но пока так.
-        int index = getElementIndex(uuid);
-        if (index != -1){
+        int index = getIndex(uuid);
+        if (index != -1) {
             storage[index] = storage[size - 1];
-            storage[size - 1] = null;            // обнуляю последний элемент
-            size--; // после смещение уменьшаю размер массива
-        }else
-        {
+            storage[size - 1] = null;
+            size--;
+        } else {
             System.out.println("Resume " + uuid + " is not found in storage");
         }
     }
@@ -56,7 +54,7 @@ public class ArrayStorage {
      * @return array, contains only Resumes in storage (without null)
      */
     public Resume[] getAll() {
-        return Arrays.copyOfRange(storage, 0, size); // возврат копии storage размером size
+        return Arrays.copyOfRange(storage, 0, size);
     }
 
     public int size() {
@@ -66,19 +64,19 @@ public class ArrayStorage {
     /**
      * HW2
      */
-    public void update(Resume resume){
-        int index = getElementIndex(resume.uuid);
-        if (index != -1){
+    public void update(Resume resume) {
+        int index = getIndex(resume.toString());
+        if (index != -1) {
             storage[index] = resume;
-            System.out.println("Resume " + resume.uuid + " was updated");
-        }else {
-            System.out.println("Resume " + resume.uuid + " is not found in storage. Nothing to update");
+            System.out.println("Resume " + resume.toString() + " was updated");
+        } else {
+            System.out.println("Resume " + resume.toString() + " is not found in storage. Nothing to update");
         }
     }
-    // добавил новы метод и везде использую теперь его
-    public int getElementIndex(String uuid){
+
+    private int getIndex(String uuid) {
         for (int i = 0; i < size; i++) {
-            if (storage[i].uuid.equals(uuid)){
+            if (storage[i].toString().equals(uuid)) {
                 return i;
             }
         }

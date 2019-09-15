@@ -6,7 +6,7 @@ package com.kuzmin.model;
 public class Resume {
 
     // Unique identifier
-    public String uuid;
+    private String uuid;
 
     @Override
     public String toString() {
