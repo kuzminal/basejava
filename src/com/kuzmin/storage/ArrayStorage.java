@@ -8,7 +8,7 @@ import com.kuzmin.model.Resume;
 public class ArrayStorage extends AbstractArrayStorage{
 
     @Override
-    public void insert(Resume resume) {
+    public void insert(Resume resume, int index) {
         storage[size] = resume;
     }
 

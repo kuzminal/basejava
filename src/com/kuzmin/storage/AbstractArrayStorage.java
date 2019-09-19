@@ -46,10 +46,10 @@ public abstract class AbstractArrayStorage implements Storage{
             if (size == STORAGE_LIMIT) {
                 System.out.println("Storage is full");
             } else {
-                insert(resume);
+                insert(resume, index);
+                size++;
             }
         }
-        size++;
     }
 
     public abstract void fillEmptySpace(int index);
@@ -65,7 +65,7 @@ public abstract class AbstractArrayStorage implements Storage{
         }
     }
 
-    public abstract void insert(Resume resume);
+    public abstract void insert(Resume resume, int index);
 
     public Resume[] getAll() {
         return Arrays.copyOf(storage, size);

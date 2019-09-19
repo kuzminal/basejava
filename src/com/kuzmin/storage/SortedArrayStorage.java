@@ -19,8 +19,8 @@ public class SortedArrayStorage extends AbstractArrayStorage {
     }
 
     @Override
-    public void insert(Resume resume) {
-        int index = Math.abs(Arrays.binarySearch(storage, 0, size, resume)) - 1;
+    public void insert(Resume resume, int index) {
+        index = Math.abs(index) - 1;
         int count = size - index;
         if (count > 0) {
             System.arraycopy(storage, index, storage, index + 1, count);
