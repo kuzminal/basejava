@@ -14,31 +14,17 @@ public class SortedArrayStorage extends AbstractArrayStorage {
 
     @Override
     public void fillEmptySpace(int index) {
-        for (int j = index; j < size - 1; j++) {
-            storage[j] = storage[j + 1];
-            storage[j + 1] = null;
-        }
+        int count = size - index - 1;
+        System.arraycopy(storage, index + 1, storage, index, count);
     }
 
     @Override
-    public void insertNewResume(Resume resume) {
-        int index = 0;
-        for (int i=0; i < size; i++){
-            if (storage[i].compareTo(resume) >= 0){
-                index = i;
-            }else index = i + 1;
+    public void insert(Resume resume) {
+        int index = Math.abs(Arrays.binarySearch(storage, 0, size, resume)) - 1;
+        int count = size - index;
+        if (count > 0) {
+            System.arraycopy(storage, index, storage, index + 1, count);
         }
-        if (size == 0){
-            storage[0] = resume;
-        } else if (size == index)
-        {
-            storage[index] = resume;
-        }else {
-            for (int j = size-1; j >= index; j--) {
-                storage[j + 1] = storage[j];
-                storage[j] = resume;
-            }
-        }
-        size++;
+        storage[index] = resume;
     }
 }

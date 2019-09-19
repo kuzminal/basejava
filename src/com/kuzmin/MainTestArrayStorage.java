@@ -20,6 +20,8 @@ public class MainTestArrayStorage {
         r3.setUuid("uuid3");
         Resume r4 = new Resume();
         r4.setUuid("uuid4");
+        Resume r5 = new Resume();
+        r5.setUuid("uuid5");
 
         ARRAY_STORAGE.save(r1);
         ARRAY_STORAGE.save(r2);
@@ -29,6 +31,7 @@ public class MainTestArrayStorage {
         SORTED_ARRAY_STORAGE.save(r1);
         SORTED_ARRAY_STORAGE.save(r4);
         SORTED_ARRAY_STORAGE.save(r3);
+        SORTED_ARRAY_STORAGE.save(r5);
         printAllSorted();
 
         System.out.println("Get r1: " + ARRAY_STORAGE.get(r1.getUuid()));

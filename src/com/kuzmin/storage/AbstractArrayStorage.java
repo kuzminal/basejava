@@ -5,7 +5,7 @@ import com.kuzmin.model.Resume;
 import java.util.Arrays;
 
 public abstract class AbstractArrayStorage implements Storage{
-    protected static final int STORAGE_LIMIT = 10000;
+    protected static final int STORAGE_LIMIT = 10_000;
 
     protected Resume[] storage = new Resume[STORAGE_LIMIT];
     protected int size = 0;
@@ -21,7 +21,7 @@ public abstract class AbstractArrayStorage implements Storage{
 
     public Resume get(String uuid) {
         int index = getIndex(uuid);
-        if (index == -1) {
+        if (index < 0) {
             System.out.println("Resume " + uuid + " not exist");
             return null;
         }
@@ -30,7 +30,7 @@ public abstract class AbstractArrayStorage implements Storage{
 
     public void update(Resume resume) {
         int index = getIndex(resume.getUuid());
-        if (index != -1) {
+        if (index >= 0) {
             storage[index] = resume;
             System.out.println("Resume " + resume.getUuid() + " was updated");
         } else {
@@ -46,16 +46,17 @@ public abstract class AbstractArrayStorage implements Storage{
             if (size == STORAGE_LIMIT) {
                 System.out.println("Storage is full");
             } else {
-                insertNewResume(resume);
+                insert(resume);
             }
         }
+        size++;
     }
 
     public abstract void fillEmptySpace(int index);
 
     public void delete(String uuid) {
         int index = getIndex(uuid);
-        if (index != -1) {
+        if (index >= 0) {
             fillEmptySpace(index);
             storage[size - 1] = null;
             size--;
@@ -64,10 +65,10 @@ public abstract class AbstractArrayStorage implements Storage{
         }
     }
 
-    public abstract void insertNewResume(Resume resume);
+    public abstract void insert(Resume resume);
 
     public Resume[] getAll() {
-        return Arrays.copyOfRange(storage, 0, size);
+        return Arrays.copyOf(storage, size);
     }
 
     protected abstract int getIndex(String uuid);
