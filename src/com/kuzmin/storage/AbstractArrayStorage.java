@@ -1,5 +1,8 @@
 package com.kuzmin.storage;
 
+import com.kuzmin.exception.ExistStorageException;
+import com.kuzmin.exception.NotExistStorageException;
+import com.kuzmin.exception.StorageException;
 import com.kuzmin.model.Resume;
 
 import java.util.Arrays;
@@ -22,8 +25,7 @@ public abstract class AbstractArrayStorage implements Storage{
     public Resume get(String uuid) {
         int index = getIndex(uuid);
         if (index < 0) {
-            System.out.println("Resume " + uuid + " not exist");
-            return null;
+            throw new NotExistStorageException(uuid);
         }
         return storage[index];
     }
@@ -32,19 +34,18 @@ public abstract class AbstractArrayStorage implements Storage{
         int index = getIndex(resume.getUuid());
         if (index >= 0) {
             storage[index] = resume;
-            System.out.println("Resume " + resume.getUuid() + " was updated");
         } else {
-            System.out.println("Resume " + resume.getUuid() + " is not found in storage. Nothing to update");
+            throw new NotExistStorageException(resume.getUuid());
         }
     }
 
     public void save(Resume resume) {
         int index = getIndex(resume.getUuid());
         if (index >= 0) {
-            System.out.println("Resume " + resume.getUuid() + " is already exist");
+            throw new ExistStorageException(resume.getUuid());
         } else {
             if (size == STORAGE_LIMIT) {
-                System.out.println("Storage is full");
+                throw new StorageException("Storage is full", resume.getUuid());
             } else {
                 insert(resume, index);
                 size++;
@@ -61,7 +62,7 @@ public abstract class AbstractArrayStorage implements Storage{
             storage[size - 1] = null;
             size--;
         } else {
-            System.out.println("Resume " + uuid + " is not found in storage");
+            throw new NotExistStorageException(uuid);
         }
     }
 
