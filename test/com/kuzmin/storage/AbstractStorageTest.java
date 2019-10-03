@@ -19,12 +19,12 @@ abstract class AbstractStorageTest {
     private static final Resume RESUME3 = new Resume(UUID3);
     private static final Resume RESUME4 = new Resume(UUID4);
 
-    public AbstractStorageTest(Storage storage){
+    public AbstractStorageTest(Storage storage) {
         this.storage = storage;
     }
 
     @BeforeEach
-    public void setUp(){
+    public void setUp() {
         storage.clear();
         storage.save(RESUME1);
         storage.save(RESUME2);
@@ -50,8 +50,10 @@ abstract class AbstractStorageTest {
     }
 
     @Test
-    void getNotExist(){
-        Assertions.assertThrows(NotExistStorageException.class, () -> {storage.get(UUID4);});
+    void getNotExist() {
+        Assertions.assertThrows(NotExistStorageException.class, () -> {
+            storage.get(UUID4);
+        });
     }
 
     @Test
@@ -60,8 +62,10 @@ abstract class AbstractStorageTest {
     }
 
     @Test
-    void updateNotExist(){
-        Assertions.assertThrows(NotExistStorageException.class, () -> {storage.update(RESUME4);});
+    void updateNotExist() {
+        Assertions.assertThrows(NotExistStorageException.class, () -> {
+            storage.update(RESUME4);
+        });
     }
 
     @Test
@@ -72,16 +76,23 @@ abstract class AbstractStorageTest {
     }
 
     @Test
-    void saveExist(){
-        Assertions.assertThrows(ExistStorageException.class,() -> {storage.save(RESUME1);});
+    void saveExist() {
+        Assertions.assertThrows(ExistStorageException.class, () -> {
+            storage.save(RESUME1);
+        });
     }
 
     @Test
-    void saveOverLimit(){
-        Assertions.assertThrows(StorageException.class,() -> {
-            for (int i = 3; i <= AbstractArrayStorage.STORAGE_LIMIT; i++) {
+    void saveOverLimit() {
+        try {
+            for (int i = storage.size(); i < AbstractArrayStorage.STORAGE_LIMIT; i++) {
                 storage.save(new Resume());
             }
+        } catch (StorageException e) {
+            Assertions.fail();
+        }
+        Assertions.assertThrows(StorageException.class, () -> {
+            storage.save(new Resume());
         });
     }
 
@@ -92,16 +103,16 @@ abstract class AbstractStorageTest {
     }
 
     @Test
-    void deleteNotExist(){
-        Assertions.assertThrows(NotExistStorageException.class,() -> {storage.get(UUID4);});
+    void deleteNotExist() {
+        Assertions.assertThrows(NotExistStorageException.class, () -> storage.get(UUID4));
     }
 
     @Test
     void getAll() {
-        Resume[] list = storage.getAll();
-        Assertions.assertEquals(3, list.length);
-        Assertions.assertEquals(RESUME1, list[0]);
-        Assertions.assertEquals(RESUME2, list[1]);
-        Assertions.assertEquals(RESUME3, list[2]);
+        Resume[] resumes = storage.getAll();
+        Assertions.assertEquals(3, resumes.length);
+        Assertions.assertEquals(RESUME1, resumes[0]);
+        Assertions.assertEquals(RESUME2, resumes[1]);
+        Assertions.assertEquals(RESUME3, resumes[2]);
     }
 }

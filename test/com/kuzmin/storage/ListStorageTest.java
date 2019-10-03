@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 class ListStorageTest extends AbstractStorageTest {
 
-    public ListStorageTest()  {
+    public ListStorageTest() {
         super(new ListStorage());
     }
 
