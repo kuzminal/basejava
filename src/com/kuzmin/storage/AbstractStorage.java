@@ -6,17 +6,17 @@ import com.kuzmin.model.Resume;
 
 public abstract class AbstractStorage implements Storage {
 
-    protected abstract Resume getResume(Object key);
-
-    protected abstract boolean contains(Object key);
-
     protected abstract void updateObject(Resume r, Object key);
 
     protected abstract void saveObject(Resume r, Object key);
 
     protected abstract void deleteObject(Object searchKey);
 
-    protected abstract Object getElement(String uuid);
+    protected abstract Object getKey(String uuid);
+
+    protected abstract boolean checkKey(Object key);
+
+    protected abstract Resume getResume(Object index);
 
     public Resume get(String uuid) {
         return getResume(getExistedElement(uuid));
@@ -35,16 +35,16 @@ public abstract class AbstractStorage implements Storage {
     }
 
     private Object getExistedElement(String uuid) {
-        Object key = getElement(uuid);
-        if (!contains(key)) {
+        Object key = getKey(uuid);
+        if (!checkKey(key)) {
             throw new NotExistStorageException(uuid);
         }
         return key;
     }
 
     private Object getNotExistedSearchKey(String uuid) {
-        Object key = getElement(uuid);
-        if (contains(key)) {
+        Object key = getKey(uuid);
+        if (checkKey(key)) {
             throw new ExistStorageException(uuid);
         }
         return key;

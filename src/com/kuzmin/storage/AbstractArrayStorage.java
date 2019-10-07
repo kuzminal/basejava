@@ -1,13 +1,11 @@
 package com.kuzmin.storage;
 
-import com.kuzmin.exception.ExistStorageException;
-import com.kuzmin.exception.NotExistStorageException;
 import com.kuzmin.exception.StorageException;
 import com.kuzmin.model.Resume;
 
 import java.util.Arrays;
 
-public abstract class AbstractArrayStorage implements Storage{
+public abstract class AbstractArrayStorage extends AbstractStorage{
     protected static final int STORAGE_LIMIT = 10_000;
 
     protected Resume[] storage = new Resume[STORAGE_LIMIT];
@@ -22,55 +20,43 @@ public abstract class AbstractArrayStorage implements Storage{
         size = 0;
     }
 
-    public Resume get(String uuid) {
-        int index = getIndex(uuid);
-        if (index < 0) {
-            throw new NotExistStorageException(uuid);
-        }
-        return storage[index];
+    public boolean checkKey(Object key){
+        return (Integer) key >= 0;
     }
 
-    public void update(Resume resume) {
-        int index = getIndex(resume.getUuid());
-        if (index >= 0) {
-            storage[index] = resume;
-        } else {
-            throw new NotExistStorageException(resume.getUuid());
-        }
+    @Override
+    public void updateObject(Resume resume, Object index) {
+        storage[(int) index] = resume;
     }
 
-    public void save(Resume resume) {
-        int index = getIndex(resume.getUuid());
-        if (index >= 0) {
-            throw new ExistStorageException(resume.getUuid());
+    @Override
+    public void saveObject(Resume resume, Object key) {
+        if (size == STORAGE_LIMIT) {
+            throw new StorageException("Storage is full", resume.getUuid());
         } else {
-            if (size == STORAGE_LIMIT) {
-                throw new StorageException("Storage is full", resume.getUuid());
-            } else {
-                insert(resume, index);
-                size++;
-            }
+            insert(resume, key);
+            size++;
         }
     }
 
     public abstract void fillEmptySpace(int index);
 
-    public void delete(String uuid) {
-        int index = getIndex(uuid);
-        if (index >= 0) {
-            fillEmptySpace(index);
-            storage[size - 1] = null;
-            size--;
-        } else {
-            throw new NotExistStorageException(uuid);
-        }
+    @Override
+    public void deleteObject(Object index) {
+        fillEmptySpace((Integer) index);
+        storage[size - 1] = null;
+        size--;
     }
 
-    public abstract void insert(Resume resume, int index);
+    public abstract void insert(Resume resume, Object index);
 
     public Resume[] getAll() {
         return Arrays.copyOf(storage, size);
     }
 
-    protected abstract int getIndex(String uuid);
+    public Resume getResume(Object index){
+        return storage[(Integer) index];
+    }
+
+    protected abstract Integer getKey(String uuid);
 }

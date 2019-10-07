@@ -14,33 +14,18 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    protected Resume getElement(String uuid) {
+    protected Integer getKey(String uuid) {
         for (int i = 0; i < listStorage.size(); i++) {
             if (listStorage.get(i).getUuid().equals(uuid)) {
-                return listStorage.get(i);
+                return i;
             }
         }
         return null;
     }
 
     @Override
-    protected Resume getResume(Object key) {
-        for (Resume resume : listStorage) {
-            if (resume.equals(key)) {
-                return resume;
-            }
-        }
-        return null;
-    }
-
-    @Override
-    protected boolean contains(Object key) {
-        for (Resume resume : listStorage) {
-            if (resume.equals(key)) {
-                return true;
-            }
-        }
-        return false;
+    protected Resume getResume(Object index) {
+        return listStorage.get((Integer) index);
     }
 
     @Override
@@ -55,7 +40,7 @@ public class ListStorage extends AbstractStorage {
 
     @Override
     protected void deleteObject(Object key) {
-        listStorage.remove(key);
+        listStorage.remove((int) key);
     }
 
     @Override
@@ -66,5 +51,9 @@ public class ListStorage extends AbstractStorage {
     @Override
     public int size() {
         return listStorage.size();
+    }
+
+    public boolean checkKey(Object key){
+        return key != null;
     }
 }
