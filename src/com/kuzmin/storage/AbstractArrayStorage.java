@@ -5,11 +5,18 @@ import com.kuzmin.model.Resume;
 
 import java.util.Arrays;
 
-public abstract class AbstractArrayStorage extends AbstractStorage{
+public abstract class AbstractArrayStorage extends AbstractStorage {
     protected static final int STORAGE_LIMIT = 10_000;
 
     protected Resume[] storage = new Resume[STORAGE_LIMIT];
+
     protected int size = 0;
+
+    public abstract void insert(Resume resume, Object index);
+
+    public abstract void fillEmptySpace(int index);
+
+    protected abstract Integer getKey(String uuid);
 
     public int size() {
         return size;
@@ -20,7 +27,7 @@ public abstract class AbstractArrayStorage extends AbstractStorage{
         size = 0;
     }
 
-    public boolean checkKey(Object key){
+    public boolean checkKey(Object key) {
         return (Integer) key >= 0;
     }
 
@@ -39,8 +46,6 @@ public abstract class AbstractArrayStorage extends AbstractStorage{
         }
     }
 
-    public abstract void fillEmptySpace(int index);
-
     @Override
     public void deleteObject(Object index) {
         fillEmptySpace((Integer) index);
@@ -48,15 +53,11 @@ public abstract class AbstractArrayStorage extends AbstractStorage{
         size--;
     }
 
-    public abstract void insert(Resume resume, Object index);
-
     public Resume[] getAll() {
         return Arrays.copyOf(storage, size);
     }
 
-    public Resume getResume(Object index){
+    public Resume getResume(Object index) {
         return storage[(Integer) index];
     }
-
-    protected abstract Integer getKey(String uuid);
 }

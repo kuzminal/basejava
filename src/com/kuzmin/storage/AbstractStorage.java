@@ -10,13 +10,13 @@ public abstract class AbstractStorage implements Storage {
 
     protected abstract void saveObject(Resume r, Object key);
 
-    protected abstract void deleteObject(Object searchKey);
+    protected abstract void deleteObject(Object key);
 
     protected abstract Object getKey(String uuid);
 
     protected abstract boolean checkKey(Object key);
 
-    protected abstract Resume getResume(Object index);
+    protected abstract Resume getResume(Object key);
 
     public Resume get(String uuid) {
         return getResume(getExistedElement(uuid));

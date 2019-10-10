@@ -2,11 +2,11 @@ package com.kuzmin.storage;
 
 import com.kuzmin.model.Resume;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class MapStorage extends AbstractStorage {
-    private Map<String, Resume> resumes = new HashMap<>();
+    private Map<String, Resume> resumes = new TreeMap<>();
 
     @Override
     protected void updateObject(Resume r, Object key) {
@@ -19,8 +19,8 @@ public class MapStorage extends AbstractStorage {
     }
 
     @Override
-    protected void deleteObject(Object searchKey) {
-        resumes.remove(searchKey);
+    protected void deleteObject(Object key) {
+        resumes.remove(key);
     }
 
     @Override
@@ -34,8 +34,8 @@ public class MapStorage extends AbstractStorage {
     }
 
     @Override
-    protected Resume getResume(Object index) {
-        return resumes.get(index);
+    protected Resume getResume(Object key) {
+        return resumes.get(key);
     }
 
     @Override

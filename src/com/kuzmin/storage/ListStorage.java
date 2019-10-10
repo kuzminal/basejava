@@ -24,8 +24,8 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    protected Resume getResume(Object index) {
-        return listStorage.get((Integer) index);
+    protected Resume getResume(Object key) {
+        return listStorage.get((Integer) key);
     }
 
     @Override
@@ -53,7 +53,7 @@ public class ListStorage extends AbstractStorage {
         return listStorage.size();
     }
 
-    public boolean checkKey(Object key){
+    public boolean checkKey(Object key) {
         return key != null;
     }
 }
