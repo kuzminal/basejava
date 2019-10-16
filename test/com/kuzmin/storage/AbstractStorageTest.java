@@ -6,7 +6,10 @@ import com.kuzmin.exception.StorageException;
 import com.kuzmin.model.Resume;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 abstract class AbstractStorageTest {
     private Storage storage;
@@ -14,10 +17,10 @@ abstract class AbstractStorageTest {
     private static final String UUID2 = "uuid2";
     private static final String UUID3 = "uuid3";
     private static final String UUID4 = "uuid4";
-    private static final Resume RESUME1 = new Resume(UUID1);
-    private static final Resume RESUME2 = new Resume(UUID2);
-    private static final Resume RESUME3 = new Resume(UUID3);
-    private static final Resume RESUME4 = new Resume(UUID4);
+    private static final Resume RESUME1 = new Resume(UUID1, "Ivanov Ivan");
+    private static final Resume RESUME2 = new Resume(UUID2, "Petrov Petr");
+    private static final Resume RESUME3 = new Resume(UUID3, "Sidorov Sidor");
+    private static final Resume RESUME4 = new Resume(UUID4, "Kozimirov Kozimir");
 
     public AbstractStorageTest(Storage storage) {
         this.storage = storage;
@@ -27,8 +30,8 @@ abstract class AbstractStorageTest {
     public void setUp() {
         storage.clear();
         storage.save(RESUME1);
-        storage.save(RESUME2);
         storage.save(RESUME3);
+        storage.save(RESUME2);
     }
 
     @Test
@@ -58,7 +61,7 @@ abstract class AbstractStorageTest {
 
     @Test
     void update() {
-        Resume testResume = new Resume("uuid2");
+        Resume testResume = new Resume("uuid2", "Petrov Petr");
         storage.update(testResume);
         Assertions.assertEquals(RESUME2, storage.get(UUID2));
     }
@@ -85,6 +88,7 @@ abstract class AbstractStorageTest {
     }
 
     @Test
+    @Tag("Array")
     void saveOverLimit() {
         try {
             for (int i = storage.size(); i < AbstractArrayStorage.STORAGE_LIMIT; i++) {
@@ -111,10 +115,10 @@ abstract class AbstractStorageTest {
 
     @Test
     void getAll() {
-        Resume[] resumes = storage.getAll();
-        Assertions.assertEquals(3, resumes.length);
-        Assertions.assertEquals(RESUME1, resumes[0]);
-        Assertions.assertEquals(RESUME2, resumes[1]);
-        Assertions.assertEquals(RESUME3, resumes[2]);
+        List<Resume> resumes = storage.getAllSorted();
+        Assertions.assertEquals(3, resumes.size());
+        Assertions.assertEquals(RESUME1, resumes.get(0));
+        Assertions.assertEquals(RESUME2, resumes.get(1));
+        Assertions.assertEquals(RESUME3, resumes.get(2));
     }
 }

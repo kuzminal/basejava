@@ -8,13 +8,15 @@ import java.util.UUID;
 public class Resume implements Comparable<Resume> {
     // Unique identifier
     private String uuid;
+    private String fullName;
 
-    public Resume(String uuid){
+    public Resume(String uuid, String fullName) {
         this.uuid = uuid;
+        this.fullName = fullName;
     }
 
-    public Resume(){
-        this(UUID.randomUUID().toString());
+    public Resume() {
+        this(UUID.randomUUID().toString(), "");
     }
 
     public String getUuid() {
@@ -25,14 +27,26 @@ public class Resume implements Comparable<Resume> {
         this.uuid = uuid;
     }
 
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
     @Override
     public String toString() {
-        return uuid;
+        return "Resume with UUID = " + uuid + " for user " + fullName;
     }
 
     @Override
     public int compareTo(Resume o) {
-        return uuid.compareTo(o.uuid);
+        if (fullName.compareTo(o.fullName) == 0) {
+            return uuid.compareTo(o.uuid);
+        } else {
+            return fullName.compareTo(o.fullName);
+        }
     }
 
     @Override
@@ -42,12 +56,14 @@ public class Resume implements Comparable<Resume> {
 
         Resume resume = (Resume) o;
 
-        return uuid.equals(resume.uuid);
+        if (uuid != null ? !uuid.equals(resume.uuid) : resume.uuid != null) return false;
+        return fullName != null ? fullName.equals(resume.fullName) : resume.fullName == null;
     }
 
     @Override
     public int hashCode() {
-        return uuid.hashCode();
+        int result = uuid != null ? uuid.hashCode() : 0;
+        result = 31 * result + (fullName != null ? fullName.hashCode() : 0);
+        return result;
     }
-
 }

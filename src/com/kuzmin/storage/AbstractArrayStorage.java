@@ -4,6 +4,8 @@ import com.kuzmin.exception.StorageException;
 import com.kuzmin.model.Resume;
 
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 
 public abstract class AbstractArrayStorage extends AbstractStorage {
     protected static final int STORAGE_LIMIT = 10_000;
@@ -53,8 +55,10 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         size--;
     }
 
-    public Resume[] getAll() {
-        return Arrays.copyOf(storage, size);
+    public List<Resume> getAllSorted() {
+        List<Resume> resumes = Arrays.asList(Arrays.copyOf(storage, size));
+        resumes.sort(Comparator.naturalOrder());
+        return resumes;
     }
 
     public Resume getResume(Object index) {
