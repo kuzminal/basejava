@@ -15,9 +15,9 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    protected Integer getKey(String uuid) {
+    protected Integer getKey(Object resume) {
         for (int i = 0; i < listStorage.size(); i++) {
-            if (listStorage.get(i).getUuid().equals(uuid)) {
+            if (listStorage.get(i).getUuid().equals(((Resume) resume).getUuid())) {
                 return i;
             }
         }

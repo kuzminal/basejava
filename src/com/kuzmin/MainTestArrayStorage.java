@@ -34,15 +34,15 @@ public class MainTestArrayStorage {
         SORTED_ARRAY_STORAGE.save(r5);
         printAllSorted();
 
-        System.out.println("Get r1: " + ARRAY_STORAGE.get(r1.getUuid()));
+       // System.out.println("Get r1: " + ARRAY_STORAGE.get(r1.getUuid()));
         System.out.println("Size: " + ARRAY_STORAGE.size());
 
-        System.out.println("Get dummy: " + ARRAY_STORAGE.get("dummy"));
+        //System.out.println("Get dummy: " + ARRAY_STORAGE.get("dummy"));
 
         printAll();
-        ARRAY_STORAGE.delete(r1.getUuid());
+        //ARRAY_STORAGE.delete(r1.getUuid());
         printAll();
-        SORTED_ARRAY_STORAGE.delete(r3.getUuid());
+        //SORTED_ARRAY_STORAGE.delete(r3.getUuid());
         printAllSorted();
 
         ARRAY_STORAGE.update(r3);

@@ -18,7 +18,7 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
 
     public abstract void fillEmptySpace(int index);
 
-    protected abstract Integer getKey(String uuid);
+    protected abstract Integer getKey(Object resume);
 
     public int size() {
         return size;

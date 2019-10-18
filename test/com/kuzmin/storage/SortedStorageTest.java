@@ -1,6 +1,6 @@
 package com.kuzmin.storage;
 
-class SortedStorageTest extends AbstractStorageTest {
+public class SortedStorageTest extends AbstractArrayStorageTest {
     public SortedStorageTest() {
         super(new SortedArrayStorage());
     }

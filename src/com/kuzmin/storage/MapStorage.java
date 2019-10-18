@@ -26,8 +26,8 @@ public class MapStorage extends AbstractStorage {
     }
 
     @Override
-    protected Object getKey(String uuid) {
-        return uuid; // возвращаю uuid потому что для мапы не нужен поиск индекса
+    protected Object getKey(Object resume) {
+        return ((Resume) resume).getUuid(); // возвращаю uuid потому что для мапы не нужен поиск индекса
     }
 
     @Override
