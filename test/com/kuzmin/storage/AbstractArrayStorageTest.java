@@ -6,23 +6,20 @@ import org.junit.Test;
 
 import static org.junit.Assert.fail;
 
-public class AbstractArrayStorageTest extends AbstractStorageTest{
-    private Storage storage;
-
+public abstract class AbstractArrayStorageTest extends AbstractStorageTest{
     protected AbstractArrayStorageTest(Storage storage) {
         super(storage);
-        this.storage = storage;
     }
 
     @Test(expected = StorageException.class)
     public void saveOverLimit() {
         try {
             for (int i = storage.size(); i < AbstractArrayStorage.STORAGE_LIMIT; i++) {
-                storage.save(new Resume());
+                storage.save(new Resume("Vasserman"));
             }
         } catch (StorageException e) {
             fail();
         }
-        storage.save(new Resume());
+        storage.save(new Resume("Vasserman"));
     }
 }

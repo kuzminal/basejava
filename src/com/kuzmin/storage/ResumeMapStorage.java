@@ -11,33 +11,33 @@ public class ResumeMapStorage extends AbstractStorage {
     private Map<String, Resume> resumes = new HashMap<>();
 
     @Override
-    protected void updateObject(Resume r, Object key) {
-        resumes.put(r.getUuid(), r);
+    protected void updateResume(Resume resume, Object searchKey) {
+        resumes.put(resume.getUuid(), resume);
     }
 
     @Override
-    protected void saveObject(Resume r, Object key) {
-        resumes.put(r.getUuid(), r);
+    protected void saveResume(Resume resume, Object searchKey) {
+        resumes.put(resume.getUuid(), resume);
     }
 
     @Override
-    protected void deleteObject(Object key) {
-        resumes.remove((Resume) key);
+    protected void deleteResume(Object searchKey) {
+        resumes.remove(searchKey);
     }
 
     @Override
-    protected Object getKey(Object resume) {
+    protected Object getSearchKey(Object resume) {
         return ((Resume) resume).getUuid();
     }
 
     @Override
-    protected boolean checkKey(Object key) {
-        return resumes.containsKey(((Resume) key).getUuid());
+    protected boolean checkSearchKey(Object searchKey) {
+        return resumes.containsKey(searchKey);
     }
 
     @Override
-    protected Resume getResume(Object key) {
-        return resumes.get(((Resume) key).getUuid());
+    protected Resume getResume(Object searchKey) {
+        return resumes.get(searchKey);
     }
 
     @Override
@@ -46,7 +46,7 @@ public class ResumeMapStorage extends AbstractStorage {
     }
 
     @Override
-    public List<Resume> getAllSorted() {
+    public List<Resume> getSortedStorage() {
         return resumes.values().stream()
                 .sorted(Resume::compareTo)
                 .collect(Collectors.toList());

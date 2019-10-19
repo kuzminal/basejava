@@ -4,49 +4,57 @@ import com.kuzmin.exception.ExistStorageException;
 import com.kuzmin.exception.NotExistStorageException;
 import com.kuzmin.model.Resume;
 
+import java.util.List;
+
 public abstract class AbstractStorage implements Storage {
 
-    protected abstract void updateObject(Resume r, Object key);
+    protected abstract void updateResume(Resume resume, Object searchKey);
 
-    protected abstract void saveObject(Resume r, Object key);
+    protected abstract void saveResume(Resume resume, Object searchKey);
 
-    protected abstract void deleteObject(Object key);
+    protected abstract void deleteResume(Object searchKey);
 
-    protected abstract Object getKey(Object uuid);
+    protected abstract Object getSearchKey(Object uuid);
 
-    protected abstract boolean checkKey(Object key);
+    protected abstract boolean checkSearchKey(Object searchKey);
 
-    protected abstract Resume getResume(Object key);
+    protected abstract Resume getResume(Object searchKey);
+
+    protected abstract List<Resume> getSortedStorage();
 
     public Resume get(Resume resume) {
         return getResume(getExistedElement(resume));
     }
 
-    public void update(Resume r) {
-        updateObject(r, getExistedElement(r));
+    public void update(Resume resume) {
+        updateResume(resume, getExistedElement(resume));
     }
 
-    public void save(Resume r) {
-        saveObject(r, getNotExistedSearchKey(r));
+    public void save(Resume resume) {
+        saveResume(resume, getNotExistedSearchKey(resume));
     }
 
     public void delete(Resume resume) {
-        deleteObject(getExistedElement(resume));
+        deleteResume(getExistedElement(resume));
     }
 
     private Object getExistedElement(Resume resume) {
-        Object key = getKey(resume);
-        if (!checkKey(key)) {
+        Object searchKey = getSearchKey(resume);
+        if (!checkSearchKey(searchKey)) {
             throw new NotExistStorageException(resume.getUuid());
         }
-        return key;
+        return searchKey;
     }
 
     private Object getNotExistedSearchKey(Resume resume) {
-        Object key = getKey(resume);
-        if (checkKey(key)) {
+        Object searchKey = getSearchKey(resume);
+        if (checkSearchKey(searchKey)) {
             throw new ExistStorageException(resume.getUuid());
         }
-        return key;
+        return searchKey;
+    }
+
+    public List<Resume> getAllSorted(){
+        return getSortedStorage();
     }
 }

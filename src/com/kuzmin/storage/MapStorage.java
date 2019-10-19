@@ -11,33 +11,33 @@ public class MapStorage extends AbstractStorage {
     private Map<String, Resume> resumes = new HashMap<>();
 
     @Override
-    protected void updateObject(Resume r, Object key) {
-        resumes.put((String) key, r);// put  и для сохранения и для обновления т.к. если ключ уже есть то значение перезапишется
+    protected void updateResume(Resume resume, Object searchKey) {
+        resumes.put((String) searchKey, resume);// put  и для сохранения и для обновления т.к. если ключ уже есть то значение перезапишется
     }
 
     @Override
-    protected void saveObject(Resume r, Object key) {
-        resumes.put((String) key, r);
+    protected void saveResume(Resume resume, Object searchKey) {
+        resumes.put((String) searchKey, resume);
     }
 
     @Override
-    protected void deleteObject(Object key) {
-        resumes.remove(key);
+    protected void deleteResume(Object searchKey) {
+        resumes.remove(searchKey);
     }
 
     @Override
-    protected Object getKey(Object resume) {
+    protected Object getSearchKey(Object resume) {
         return ((Resume) resume).getUuid(); // возвращаю uuid потому что для мапы не нужен поиск индекса
     }
 
     @Override
-    protected boolean checkKey(Object key) {
-        return resumes.containsKey(key);
+    protected boolean checkSearchKey(Object searchKey) {
+        return resumes.containsKey(searchKey);
     }
 
     @Override
-    protected Resume getResume(Object key) {
-        return resumes.get(key);
+    protected Resume getResume(Object searchKey) {
+        return resumes.get(searchKey);
     }
 
     @Override
@@ -46,7 +46,7 @@ public class MapStorage extends AbstractStorage {
     }
 
     @Override
-    public List<Resume> getAllSorted() {
+    public List<Resume> getSortedStorage() {
         return resumes.values().stream()
                 .sorted()
                 .collect(Collectors.toList());

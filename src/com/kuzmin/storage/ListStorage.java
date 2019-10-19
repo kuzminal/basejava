@@ -15,7 +15,7 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    protected Integer getKey(Object resume) {
+    protected Integer getSearchKey(Object resume) {
         for (int i = 0; i < listStorage.size(); i++) {
             if (listStorage.get(i).getUuid().equals(((Resume) resume).getUuid())) {
                 return i;
@@ -25,27 +25,27 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    protected Resume getResume(Object key) {
-        return listStorage.get((Integer) key);
+    protected Resume getResume(Object searchKey) {
+        return listStorage.get((Integer) searchKey);
     }
 
     @Override
-    protected void updateObject(Resume r, Object key) {
-        listStorage.set((Integer) key, r);
+    protected void updateResume(Resume resume, Object searchKey) {
+        listStorage.set((Integer) searchKey, resume);
     }
 
     @Override
-    protected void saveObject(Resume r, Object key) {
-        listStorage.add(r);
+    protected void saveResume(Resume resume, Object searchKey) {
+        listStorage.add(resume);
     }
 
     @Override
-    protected void deleteObject(Object key) {
-        listStorage.remove((int) key);
+    protected void deleteResume(Object searchKey) {
+        listStorage.remove((int) searchKey);
     }
 
     @Override
-    public List<Resume> getAllSorted() {
+    public List<Resume> getSortedStorage() {
         listStorage.sort(Comparator.naturalOrder());
         return listStorage;
     }
@@ -55,7 +55,7 @@ public class ListStorage extends AbstractStorage {
         return listStorage.size();
     }
 
-    public boolean checkKey(Object key) {
-        return key != null;
+    public boolean checkSearchKey(Object searchKey) {
+        return searchKey != null;
     }
 }

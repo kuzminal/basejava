@@ -6,12 +6,14 @@ import com.kuzmin.model.Resume;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-public abstract class AbstractStorageTest{
-    private Storage storage;
+public abstract class AbstractStorageTest {
+    protected Storage storage;
     private static final String UUID1 = "uuid1";
     private static final String UUID2 = "uuid2";
     private static final String UUID3 = "uuid3";
@@ -96,11 +98,14 @@ public abstract class AbstractStorageTest{
     }
 
     @Test
-    public void getAll() {
+    public void getAllSorted() {
         List<Resume> resumes = storage.getAllSorted();
         assertEquals(3, resumes.size());
-        assertEquals(RESUME1, resumes.get(0));
-        assertEquals(RESUME2, resumes.get(1));
-        assertEquals(RESUME3, resumes.get(2));
+        List<Resume> testList = new ArrayList<>();
+        testList.add(RESUME1);
+        testList.add(RESUME2);
+        testList.add(RESUME3);
+        testList.sort(Comparator.naturalOrder());
+        assertEquals(resumes, testList);
     }
 }

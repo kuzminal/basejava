@@ -18,7 +18,7 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
 
     public abstract void fillEmptySpace(int index);
 
-    protected abstract Integer getKey(Object resume);
+    protected abstract Integer getSearchKey(Object uuid);
 
     public int size() {
         return size;
@@ -29,33 +29,33 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         size = 0;
     }
 
-    public boolean checkKey(Object key) {
-        return (Integer) key >= 0;
+    public boolean checkSearchKey(Object searchKey) {
+        return (Integer) searchKey >= 0;
     }
 
     @Override
-    public void updateObject(Resume resume, Object index) {
+    public void updateResume(Resume resume, Object index) {
         storage[(int) index] = resume;
     }
 
     @Override
-    public void saveObject(Resume resume, Object key) {
+    public void saveResume(Resume resume, Object searchKey) {
         if (size == STORAGE_LIMIT) {
             throw new StorageException("Storage is full", resume.getUuid());
         } else {
-            insert(resume, key);
+            insert(resume, searchKey);
             size++;
         }
     }
 
     @Override
-    public void deleteObject(Object index) {
+    public void deleteResume(Object index) {
         fillEmptySpace((Integer) index);
         storage[size - 1] = null;
         size--;
     }
 
-    public List<Resume> getAllSorted() {
+    public List<Resume> getSortedStorage() {
         List<Resume> resumes = Arrays.asList(Arrays.copyOf(storage, size));
         resumes.sort(Comparator.naturalOrder());
         return resumes;
