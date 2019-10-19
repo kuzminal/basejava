@@ -18,14 +18,10 @@ public abstract class AbstractStorageTest {
     private static final String UUID2 = "uuid2";
     private static final String UUID3 = "uuid3";
     private static final String UUID4 = "uuid4";
-    private static final String FULL_NAME1 = "Ivanov Ivan";
-    private static final String FULL_NAME2 = "Petrov Petr";
-    private static final String FULL_NAME3 = "Sidorov Sidor";
-    private static final String FULL_NAME4 = "Kozimirov Kozimir";
-    private static final Resume RESUME1 = new Resume(UUID1, FULL_NAME1);
-    private static final Resume RESUME2 = new Resume(UUID2, FULL_NAME2);
-    private static final Resume RESUME3 = new Resume(UUID3, FULL_NAME3);
-    private static final Resume RESUME4 = new Resume(UUID4, FULL_NAME4);
+    private static final Resume RESUME1 = new Resume(UUID1, "Ivanov Ivan");
+    private static final Resume RESUME2 = new Resume(UUID2, "Petrov Petr");
+    private static final Resume RESUME3 = new Resume(UUID3, "Sidorov Sidor");
+    private static final Resume RESUME4 = new Resume(UUID4, "Kozimirov Kozimir");
 
     protected AbstractStorageTest(Storage storage) {
         this.storage = storage;
