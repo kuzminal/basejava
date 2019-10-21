@@ -14,13 +14,15 @@ public abstract class AbstractStorage implements Storage {
 
     protected abstract void deleteResume(Object searchKey);
 
-    protected abstract Object getSearchKey(Object uuid);
+    protected abstract Object getSearchKey(Object searchKey);
 
     protected abstract boolean checkSearchKey(Object searchKey);
 
     protected abstract Resume getResume(Object searchKey);
 
-    protected abstract List<Resume> getSortedStorage();
+    protected abstract List<Resume> getAll();
+
+    protected abstract List<Resume> sortResumes(List<Resume> resumes);
 
     public Resume get(Resume resume) {
         return getResume(getExistedElement(resume));
@@ -55,6 +57,7 @@ public abstract class AbstractStorage implements Storage {
     }
 
     public List<Resume> getAllSorted() {
-        return getSortedStorage();
+        List<Resume> resumes = getAll();
+        return sortResumes(resumes);
     }
 }

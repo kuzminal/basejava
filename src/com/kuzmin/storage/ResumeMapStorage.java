@@ -2,6 +2,7 @@ package com.kuzmin.storage;
 
 import com.kuzmin.model.Resume;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,22 +23,27 @@ public class ResumeMapStorage extends AbstractStorage {
 
     @Override
     protected void deleteResume(Object searchKey) {
-        resumes.remove(searchKey);
+        resumes.remove(((Resume) searchKey).getUuid());
     }
 
     @Override
-    protected Object getSearchKey(Object resume) {
-        return ((Resume) resume).getUuid();
+    protected Resume getSearchKey(Object resume) {
+        return resumes.get(((Resume) resume).getUuid());
     }
 
     @Override
     protected boolean checkSearchKey(Object searchKey) {
-        return resumes.containsKey(searchKey);
+        return searchKey != null;
     }
 
     @Override
     protected Resume getResume(Object searchKey) {
-        return resumes.get(searchKey);
+        return (Resume) searchKey;
+    }
+
+    @Override
+    protected List<Resume> getAll() {
+        return new ArrayList<>(resumes.values());
     }
 
     @Override
@@ -46,8 +52,8 @@ public class ResumeMapStorage extends AbstractStorage {
     }
 
     @Override
-    public List<Resume> getSortedStorage() {
-        return resumes.values().stream()
+    public List<Resume> sortResumes(List<Resume> resumes) {
+        return resumes.stream()
                 .sorted(Resume::compareTo)
                 .collect(Collectors.toList());
     }

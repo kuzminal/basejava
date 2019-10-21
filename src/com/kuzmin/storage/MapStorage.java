@@ -2,6 +2,7 @@ package com.kuzmin.storage;
 
 import com.kuzmin.model.Resume;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +27,7 @@ public class MapStorage extends AbstractStorage {
     }
 
     @Override
-    protected Object getSearchKey(Object resume) {
+    protected String getSearchKey(Object resume) {
         return ((Resume) resume).getUuid(); // возвращаю uuid потому что для мапы не нужен поиск индекса
     }
 
@@ -41,13 +42,18 @@ public class MapStorage extends AbstractStorage {
     }
 
     @Override
+    protected List<Resume> getAll() {
+        return new ArrayList<>(resumes.values());
+    }
+
+    @Override
     public void clear() {
         resumes.clear();
     }
 
     @Override
-    public List<Resume> getSortedStorage() {
-        return resumes.values().stream()
+    public List<Resume> sortResumes(List<Resume> resumes) {
+        return resumes.stream()
                 .sorted()
                 .collect(Collectors.toList());
     }

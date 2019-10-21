@@ -3,8 +3,8 @@ package com.kuzmin.storage;
 import com.kuzmin.model.Resume;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ListStorage extends AbstractStorage {
     private List<Resume> listStorage = new ArrayList<>();
@@ -30,6 +30,18 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
+    protected List<Resume> getAll() {
+        return listStorage;
+    }
+
+    @Override
+    protected List<Resume> sortResumes(List<Resume> resumes) {
+        return resumes.stream()
+                .sorted()
+                .collect(Collectors.toList());
+    }
+
+    @Override
     protected void updateResume(Resume resume, Object searchKey) {
         listStorage.set((Integer) searchKey, resume);
     }
@@ -42,12 +54,6 @@ public class ListStorage extends AbstractStorage {
     @Override
     protected void deleteResume(Object searchKey) {
         listStorage.remove((int) searchKey);
-    }
-
-    @Override
-    public List<Resume> getSortedStorage() {
-        listStorage.sort(Comparator.naturalOrder());
-        return listStorage;
     }
 
     @Override

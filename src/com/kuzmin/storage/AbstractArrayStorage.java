@@ -18,7 +18,7 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
 
     public abstract void fillEmptySpace(int index);
 
-    protected abstract Integer getSearchKey(Object uuid);
+    protected abstract Integer getSearchKey(Object resume);
 
     public int size() {
         return size;
@@ -55,8 +55,12 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         size--;
     }
 
-    public List<Resume> getSortedStorage() {
-        List<Resume> resumes = Arrays.asList(Arrays.copyOf(storage, size));
+    @Override
+    public List<Resume> getAll() {
+        return Arrays.asList(Arrays.copyOf(storage, size));
+    }
+
+    public List<Resume> sortResumes(List<Resume> resumes) {
         resumes.sort(Comparator.naturalOrder());
         return resumes;
     }
