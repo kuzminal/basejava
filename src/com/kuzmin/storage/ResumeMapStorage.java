@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class ResumeMapStorage extends AbstractStorage {
     private Map<String, Resume> resumes = new HashMap<>();
@@ -49,13 +48,6 @@ public class ResumeMapStorage extends AbstractStorage {
     @Override
     public void clear() {
         resumes.clear();
-    }
-
-    @Override
-    public List<Resume> sortResumes(List<Resume> resumes) {
-        return resumes.stream()
-                .sorted(Resume::compareTo)
-                .collect(Collectors.toList());
     }
 
     @Override

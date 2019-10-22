@@ -5,6 +5,7 @@ import com.kuzmin.exception.NotExistStorageException;
 import com.kuzmin.model.Resume;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public abstract class AbstractStorage implements Storage {
 
@@ -22,7 +23,11 @@ public abstract class AbstractStorage implements Storage {
 
     protected abstract List<Resume> getAll();
 
-    protected abstract List<Resume> sortResumes(List<Resume> resumes);
+    public List<Resume> sortResumes(List<Resume> resumes){
+        return resumes.stream()
+                .sorted()
+                .collect(Collectors.toList());
+    }
 
     public Resume get(Resume resume) {
         return getResume(getExistedElement(resume));

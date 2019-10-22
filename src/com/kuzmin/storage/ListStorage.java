@@ -4,7 +4,6 @@ import com.kuzmin.model.Resume;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ListStorage extends AbstractStorage {
     private List<Resume> listStorage = new ArrayList<>();
@@ -15,9 +14,9 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    protected Integer getSearchKey(Object resume) {
+    protected Integer getSearchKey(Object uuid) {
         for (int i = 0; i < listStorage.size(); i++) {
-            if (listStorage.get(i).getUuid().equals(((Resume) resume).getUuid())) {
+            if (listStorage.get(i).getUuid().equals(((Resume) uuid).getUuid())) {
                 return i;
             }
         }
@@ -32,13 +31,6 @@ public class ListStorage extends AbstractStorage {
     @Override
     protected List<Resume> getAll() {
         return listStorage;
-    }
-
-    @Override
-    protected List<Resume> sortResumes(List<Resume> resumes) {
-        return resumes.stream()
-                .sorted()
-                .collect(Collectors.toList());
     }
 
     @Override

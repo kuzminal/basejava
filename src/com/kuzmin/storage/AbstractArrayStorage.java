@@ -18,8 +18,6 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
 
     public abstract void fillEmptySpace(int index);
 
-    protected abstract Integer getSearchKey(Object resume);
-
     public int size() {
         return size;
     }
@@ -29,8 +27,8 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         size = 0;
     }
 
-    public boolean checkSearchKey(Object searchKey) {
-        return (Integer) searchKey >= 0;
+    public boolean checkSearchKey(Object index) {
+        return (Integer) index >= 0;
     }
 
     @Override
