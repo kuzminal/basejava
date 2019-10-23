@@ -13,7 +13,7 @@ public interface Storage {
 
     Resume get(Resume resume);
 
-    void delete(Resume resume);
+    void delete(String uuid);
 
     List<Resume> getAllSorted();
 

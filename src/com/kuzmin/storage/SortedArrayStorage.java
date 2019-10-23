@@ -3,11 +3,15 @@ package com.kuzmin.storage;
 import com.kuzmin.model.Resume;
 
 import java.util.Arrays;
+import java.util.Comparator;
 
 public class SortedArrayStorage extends AbstractArrayStorage {
+
     @Override
-    protected Integer getSearchKey(Object resume) {
-        return Arrays.binarySearch(storage, 0, size, resume);
+    protected Integer getSearchKey(Object uuid) {
+        Resume searchKey = new Resume((String) uuid, "Ivanov");
+        Comparator<Resume> uuidComparator = Comparator.comparing(o -> o.getUuid());
+        return Arrays.binarySearch(storage, 0, size, searchKey, uuidComparator);
     }
 
     @Override

@@ -26,8 +26,8 @@ public class ResumeMapStorage extends AbstractStorage {
     }
 
     @Override
-    protected Resume getSearchKey(Object resume) {
-        return resumes.get(((Resume) resume).getUuid());
+    protected Resume getSearchKey(Object uuid) {
+        return resumes.get(uuid);
     }
 
     @Override
