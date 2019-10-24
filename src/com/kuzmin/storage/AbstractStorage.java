@@ -23,14 +23,8 @@ public abstract class AbstractStorage implements Storage {
 
     protected abstract List<Resume> getAll();
 
-    public List<Resume> sortResumes(List<Resume> resumes){
-        return resumes.stream()
-                .sorted()
-                .collect(Collectors.toList());
-    }
-
-    public Resume get(Resume resume) {
-        return getResume(getExistedElement(resume.getUuid()));
+    public Resume get(String uuid) {
+        return getResume(getExistedElement(uuid));
     }
 
     public void update(Resume resume) {
@@ -43,6 +37,11 @@ public abstract class AbstractStorage implements Storage {
 
     public void delete(String resume) {
         deleteResume(getExistedElement(resume));
+    }
+
+    public List<Resume> getAllSorted() {
+        List<Resume> resumes = getAll();
+        return sortResumes(resumes);
     }
 
     private Object getExistedElement(String uuid) {
@@ -61,8 +60,9 @@ public abstract class AbstractStorage implements Storage {
         return searchKey;
     }
 
-    public List<Resume> getAllSorted() {
-        List<Resume> resumes = getAll();
-        return sortResumes(resumes);
+    private List<Resume> sortResumes(List<Resume> resumes){
+        return resumes.stream()
+                .sorted()
+                .collect(Collectors.toList());
     }
 }
