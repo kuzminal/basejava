@@ -1,5 +1,6 @@
 package com.kuzmin.model;
 
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -9,6 +10,8 @@ public class Resume implements Comparable<Resume> {
     // Unique identifier
     private String uuid;
     private String fullName;
+    private Map<ContactType, Contact> contacts;
+    private Map<SectionType, Section> sections;
 
     public Resume(String fullName) {
         this(UUID.randomUUID().toString(), fullName);
@@ -17,6 +20,22 @@ public class Resume implements Comparable<Resume> {
     public Resume(String uuid, String fullName) {
         this.uuid = uuid;
         this.fullName = fullName;
+    }
+
+    public Map<ContactType, Contact> getContacts() {
+        return contacts;
+    }
+
+    public void setContacts(Map<ContactType, Contact> contacts) {
+        this.contacts = contacts;
+    }
+
+    public Map<SectionType, Section> getSections() {
+        return sections;
+    }
+
+    public void setSections(Map<SectionType, Section> sections) {
+        this.sections = sections;
     }
 
     public String getUuid() {
