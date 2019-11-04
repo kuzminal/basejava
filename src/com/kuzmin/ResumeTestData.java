@@ -12,13 +12,13 @@ public class ResumeTestData {
         Contact email = new Contact("mail@gmail.com");
         Contact icq = new Contact("123456789");
         Contact git = new Contact("github.com");
-        Map<ContactType, Contact> contacts = new HashMap<>();
+        Map<ContactType, Contact> contacts = resume.getContacts();
         contacts.put(ContactType.PHONE, phone);
         contacts.put(ContactType.ICQ, icq);
         contacts.put(ContactType.EMAIL, email);
         contacts.put(ContactType.GIT, git);
         resume.setContacts(contacts);
-        Map<SectionType, Section> sections = new HashMap<>();
+        Map<SectionType, Section> sections = resume.getSections();
         Section objective = new TextSection(SectionType.OBJECTIVE, "Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям");
         sections.put(SectionType.OBJECTIVE, objective);
         Section personal = new TextSection(SectionType.PERSONAL, "Аналитический склад ума, сильная логика, креативность, инициативность. Пурист кода и архитектуры.");

@@ -1,5 +1,6 @@
 package com.kuzmin.model;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -21,6 +22,8 @@ public class Resume implements Comparable<Resume> {
     public Resume(String uuid, String fullName) {
         this.uuid = uuid;
         this.fullName = fullName;
+        this.contacts = new HashMap<>();
+        this.sections = new HashMap<>();
     }
 
     public Map<ContactType, Contact> getContacts() {
