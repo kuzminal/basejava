@@ -45,6 +45,6 @@ public class ResumeTestData {
         educations.add(new Organization(YearMonth.parse("2013-03"), YearMonth.parse("2013-05"), "\"Functional Programming Principles in Scala\" by Martin Odersky", "Coursera"));
         educations.add(new Organization(YearMonth.parse("1984-09"), YearMonth.parse("1987-06"), "Закончил с отличием", "Заочная физико-техническая школа при МФТИ"));
         resume.setSections(sections);
-        System.out.println(resume.toString());
+        System.out.println(resume);
     }
 }
