@@ -2,6 +2,7 @@ package com.kuzmin;
 
 import com.kuzmin.model.*;
 
+import java.time.YearMonth;
 import java.util.*;
 
 public class ResumeTestData {
@@ -34,14 +35,16 @@ public class ResumeTestData {
         qualifications.add("DB: PostgreSQL(наследование, pgplsql, PL/Python), Redis (Jedis), H2, Oracle,");
         Section qualification = new TextListSection(SectionType.QUALIFICATIONS, qualifications);
         sections.put(SectionType.QUALIFICATIONS, qualification);
-        List<ExperienceAndEducationDescription> experiences = new ArrayList<>();
-        experiences.add(new ExperienceAndEducationDescription("10/2013", "Сейчас", "Автор проекта.\nСоздание, организация и проведение Java онлайн проектов и стажировок.", "Java Online Projects"));
-        experiences.add(new ExperienceAndEducationDescription("10/2014", "01/2016", "Старший разработчик (backend)\n" +
+        List<Organization> experiences = new ArrayList<>();
+        experiences.add(new Organization(YearMonth.parse("2013-10"), YearMonth.now(), "Автор проекта.\nСоздание, организация и проведение Java онлайн проектов и стажировок.", "Java Online Projects"));
+        experiences.add(new Organization(YearMonth.parse("2014-10"), YearMonth.parse("2016-01"), "Старший разработчик (backend)\n" +
                 "Проектирование и разработка онлайн платформы управления проектами Wrike (Java 8 API, Maven, Spring, MyBatis, Guava, Vaadin, PostgreSQL, Redis). Двухфакторная аутентификация, авторизация по OAuth1, OAuth2, JWT SSO.", "Wrike"));
-        ExperienceAndEducationSection experience = new ExperienceAndEducationSection(SectionType.EXPERIENCE, experiences);
+        OrganizationSection experience = new OrganizationSection(SectionType.EXPERIENCE, experiences);
         sections.put(SectionType.EXPERIENCE, experience);
-        List<ExperienceAndEducationDescription> educations = new ArrayList<>();
-        educations.add(new ExperienceAndEducationDescription("03/2013", "05/2013", "\"Functional Programming Principles in Scala\" by Martin Odersky", "Coursera"));
-        educations.add(new ExperienceAndEducationDescription("09/1984", "06/1987", "Закончил с отличием", "Заочная физико-техническая школа при МФТИ"));
+        List<Organization> educations = new ArrayList<>();
+        educations.add(new Organization(YearMonth.parse("2013-03"), YearMonth.parse("2013-05"), "\"Functional Programming Principles in Scala\" by Martin Odersky", "Coursera"));
+        educations.add(new Organization(YearMonth.parse("1984-09"), YearMonth.parse("1987-06"), "Закончил с отличием", "Заочная физико-техническая школа при МФТИ"));
+        resume.setSections(sections);
+        System.out.println(resume.toString());
     }
 }

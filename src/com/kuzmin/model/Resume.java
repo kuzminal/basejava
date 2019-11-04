@@ -1,6 +1,7 @@
 package com.kuzmin.model;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -56,7 +57,19 @@ public class Resume implements Comparable<Resume> {
 
     @Override
     public String toString() {
-        return "Resume with UUID = " + uuid + " for user " + fullName;
+        StringBuilder printResume = new StringBuilder();
+        printResume.append("Резюме uuid : " + uuid + "\n");
+        printResume.append("ФИО : " + fullName);
+        printResume.append("\n");
+        printResume.append("\nКонтакты :\n");
+        for (Map.Entry contact : contacts.entrySet()) {
+            printResume.append(contact.getKey() + " : " + contact.getValue().toString()+ "\n");
+        }
+        for (Map.Entry section : sections.entrySet()) {
+            printResume.append("\n" + section.getKey().toString() + " :\n");
+            printResume.append(section.getValue().toString());
+        }
+        return printResume.toString();
     }
 
     @Override
@@ -69,17 +82,15 @@ public class Resume implements Comparable<Resume> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         Resume resume = (Resume) o;
-
-        if (uuid != null ? !uuid.equals(resume.uuid) : resume.uuid != null) return false;
-        return fullName != null ? fullName.equals(resume.fullName) : resume.fullName == null;
+        return Objects.equals(uuid, resume.uuid) &&
+                Objects.equals(fullName, resume.fullName) &&
+                Objects.equals(contacts, resume.contacts) &&
+                Objects.equals(sections, resume.sections);
     }
 
     @Override
     public int hashCode() {
-        int result = uuid != null ? uuid.hashCode() : 0;
-        result = 31 * result + (fullName != null ? fullName.hashCode() : 0);
-        return result;
+        return Objects.hash(uuid, fullName, contacts, sections);
     }
 }
