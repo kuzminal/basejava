@@ -3,7 +3,7 @@ package com.kuzmin.model;
 import java.util.List;
 import java.util.Objects;
 
-public class TextListSection extends Section{
+public class TextListSection extends AbstractSection {
     private List<String> textInformations;
 
     public TextListSection(SectionType sectionType, List<String> textInformations) {

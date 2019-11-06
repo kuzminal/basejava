@@ -3,7 +3,7 @@ package com.kuzmin.model;
 import java.util.List;
 import java.util.Objects;
 
-public class OrganizationSection extends Section {
+public class OrganizationSection extends AbstractSection {
     private List<Organization> organizations;
 
     public OrganizationSection(SectionType sectionType, List<Organization> elements) {

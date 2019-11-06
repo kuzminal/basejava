@@ -1,9 +1,6 @@
 package com.kuzmin.model;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Initial resume class
@@ -12,8 +9,8 @@ public class Resume implements Comparable<Resume> {
     // Unique identifier
     private String uuid;
     private String fullName;
-    private Map<ContactType, Contact> contacts;
-    private Map<SectionType, Section> sections;
+    private EnumMap<ContactType, Contact> contacts;
+    private EnumMap<SectionType, AbstractSection> sections;
 
     public Resume(String fullName) {
         this(UUID.randomUUID().toString(), fullName);
@@ -22,23 +19,23 @@ public class Resume implements Comparable<Resume> {
     public Resume(String uuid, String fullName) {
         this.uuid = uuid;
         this.fullName = fullName;
-        this.contacts = new HashMap<>();
-        this.sections = new HashMap<>();
+        this.contacts = new EnumMap<ContactType, Contact>(ContactType.class);
+        this.sections = new EnumMap<SectionType, AbstractSection>(SectionType.class);
     }
 
-    public Map<ContactType, Contact> getContacts() {
+    public EnumMap<ContactType, Contact> getContacts() {
         return contacts;
     }
 
-    public void setContacts(Map<ContactType, Contact> contacts) {
+    public void setContacts(EnumMap<ContactType, Contact> contacts) {
         this.contacts = contacts;
     }
 
-    public Map<SectionType, Section> getSections() {
+    public EnumMap<SectionType, AbstractSection> getSections() {
         return sections;
     }
 
-    public void setSections(Map<SectionType, Section> sections) {
+    public void setSections(EnumMap<SectionType, AbstractSection> sections) {
         this.sections = sections;
     }
 

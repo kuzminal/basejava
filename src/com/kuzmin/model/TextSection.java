@@ -2,7 +2,7 @@ package com.kuzmin.model;
 
 import java.util.Objects;
 
-public class TextSection extends Section{
+public class TextSection extends AbstractSection {
     private String textInformation;
 
     public TextSection(SectionType sectionType, String textInformation) {

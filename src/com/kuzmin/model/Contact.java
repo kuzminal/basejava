@@ -3,18 +3,18 @@ package com.kuzmin.model;
 import java.util.Objects;
 
 public class Contact {
-    private String contactContent;
+    private String contact;
 
-    public Contact(String contactContent) {
-        this.contactContent = contactContent;
+    public Contact(String contact) {
+        this.contact = contact;
     }
 
-    public String getContactContent() {
-        return contactContent;
+    public String getContact() {
+        return contact;
     }
 
-    public void setContactContent(String contactContent) {
-        this.contactContent = contactContent;
+    public void setContact(String contact) {
+        this.contact = contact;
     }
 
     @Override
@@ -22,16 +22,16 @@ public class Contact {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Contact contact = (Contact) o;
-        return Objects.equals(contactContent, contact.contactContent);
+        return Objects.equals(this.contact, contact.contact);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(contactContent);
+        return Objects.hash(contact);
     }
 
     @Override
     public String toString() {
-        return contactContent;
+        return contact;
     }
 }
