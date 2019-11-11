@@ -1,19 +1,15 @@
 package com.kuzmin.model;
 
-import java.time.YearMonth;
+import java.util.List;
 import java.util.Objects;
 
 public class Organization {
     private String title;
-    private YearMonth startDate;
-    private YearMonth endDate;
-    private String description;
+    private List<Experience> experiences;
 
-    public Organization(YearMonth startDate, YearMonth endDate, String description, String title) {
+    public Organization(String title, List<Experience> experiences) {
         this.title = title;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.description = description;
+        this.experiences = experiences;
     }
 
     public String getTitle() {
@@ -24,51 +20,27 @@ public class Organization {
         this.title = title;
     }
 
-    public YearMonth getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(YearMonth startDate) {
-        this.startDate = startDate;
-    }
-
-    public YearMonth getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(YearMonth endDate) {
-        this.endDate = endDate;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Organization that = (Organization) o;
         return Objects.equals(title, that.title) &&
-                Objects.equals(startDate, that.startDate) &&
-                Objects.equals(endDate, that.endDate) &&
-                Objects.equals(description, that.description);
+                Objects.equals(experiences, that.experiences);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(title, startDate, endDate, description);
+        return Objects.hash(title, experiences);
     }
 
     @Override
     public String toString() {
-        String endDateNow = endDate.equals(YearMonth.now()) ? "по наст. врем" : endDate.toString();
-        return startDate + " - " + endDateNow +
-                " : " + title +
-                "\n" + description;
+        StringBuilder result = new StringBuilder();
+        result.append(title + "\n");
+        for (Experience experience : experiences){
+            result.append(experience + "\n");
+        }
+        return result.toString();
     }
 }

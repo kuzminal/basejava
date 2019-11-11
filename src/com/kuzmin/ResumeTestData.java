@@ -3,7 +3,9 @@ package com.kuzmin;
 import com.kuzmin.model.*;
 
 import java.time.YearMonth;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
 
 public class ResumeTestData {
     public static void main(String[] args) {
@@ -35,15 +37,36 @@ public class ResumeTestData {
         qualifications.add("DB: PostgreSQL(наследование, pgplsql, PL/Python), Redis (Jedis), H2, Oracle,");
         AbstractSection qualification = new TextListSection(SectionType.QUALIFICATIONS, qualifications);
         sections.put(SectionType.QUALIFICATIONS, qualification);
-        List<Organization> experiences = new ArrayList<>();
-        experiences.add(new Organization(YearMonth.parse("2013-10"), YearMonth.now(), "Автор проекта.\nСоздание, организация и проведение Java онлайн проектов и стажировок.", "Java Online Projects"));
-        experiences.add(new Organization(YearMonth.parse("2014-10"), YearMonth.parse("2016-01"), "Старший разработчик (backend)\n" +
-                "Проектирование и разработка онлайн платформы управления проектами Wrike (Java 8 API, Maven, Spring, MyBatis, Guava, Vaadin, PostgreSQL, Redis). Двухфакторная аутентификация, авторизация по OAuth1, OAuth2, JWT SSO.", "Wrike"));
-        OrganizationSection experience = new OrganizationSection(SectionType.EXPERIENCE, experiences);
+        List<Experience> experiencesJavaOnline = new ArrayList<>();
+        List<Organization> organizations = new ArrayList<>();
+        Experience author = new Experience(YearMonth.parse("2013-10"), YearMonth.now(), "Автор проекта.\nСоздание, организация и проведение Java онлайн проектов и стажировок.");
+        experiencesJavaOnline.add(author);
+        Organization javaOnline = new Organization("Java Online Projects", experiencesJavaOnline);
+        organizations.add(javaOnline);
+        Experience seniorDeveloper = new Experience(YearMonth.parse("2014-10"), YearMonth.parse("2016-01"), "Старший разработчик (backend).\nПроектирование и разработка онлайн платформы управления проектами Wrike (Java 8 API, Maven, Spring, MyBatis, Guava, Vaadin, PostgreSQL, Redis). \nДвухфакторная аутентификация, авторизация по OAuth1, OAuth2, JWT SSO.");
+        Experience director = new Experience(YearMonth.parse("2016-01"), YearMonth.parse("2018-01"), "Директор компании.\nРуководство компание для достижения светлого будущего");
+        List<Experience> wrikeExperience = new ArrayList<>();
+        wrikeExperience.add(seniorDeveloper);
+        wrikeExperience.add(director);
+        Organization seniorDeveloperOrganization = new Organization("Wrike", wrikeExperience);
+        organizations.add(seniorDeveloperOrganization);
+        OrganizationSection experience = new OrganizationSection(SectionType.EXPERIENCE, organizations);
         sections.put(SectionType.EXPERIENCE, experience);
+
         List<Organization> educations = new ArrayList<>();
-        educations.add(new Organization(YearMonth.parse("2013-03"), YearMonth.parse("2013-05"), "\"Functional Programming Principles in Scala\" by Martin Odersky", "Coursera"));
-        educations.add(new Organization(YearMonth.parse("1984-09"), YearMonth.parse("1987-06"), "Закончил с отличием", "Заочная физико-техническая школа при МФТИ"));
+        List<Experience> educationCoursera = new ArrayList<>();
+        Experience courseraExperience = new Experience(YearMonth.parse("2013-03"), YearMonth.parse("2013-05"), "\"Functional Programming Principles in Scala\" by Martin Odersky");
+        educationCoursera.add(courseraExperience);
+        Organization coursera = new Organization("Coursera", educationCoursera);
+        educations.add(coursera);
+        List<Experience> educationMPTU = new ArrayList<>();
+        Experience mptuExperience = new Experience(YearMonth.parse("1984-09"), YearMonth.parse("1987-06"), "Закончил с отличием");
+        educationMPTU.add(mptuExperience);
+        Organization mptu = new Organization("Заочная физико-техническая школа при МФТИ", educationCoursera);
+        educations.add(mptu);
+        OrganizationSection education = new OrganizationSection(SectionType.EDUCATION, educations);
+        sections.put(SectionType.EDUCATION, education);
+
         resume.setSections(sections);
         System.out.println(resume);
     }
