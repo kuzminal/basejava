@@ -5,6 +5,7 @@ import com.kuzmin.model.Resume;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -22,9 +23,16 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
         this.directory = directory;
     }
 
+    protected abstract void doWrite(Resume resume, File file) throws IOException;
+    protected abstract Resume doRead(File file) throws IOException;
+
     @Override
     protected void updateResume(Resume resume, File file) {
-
+        try {
+            doWrite(resume, file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -37,11 +45,9 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
         }
     }
 
-    protected abstract void doWrite(Resume resume, File file) throws IOException;
-
     @Override
     protected void deleteResume(File file) {
-
+        file.delete();
     }
 
     @Override
@@ -56,21 +62,46 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     @Override
     protected Resume getResume(File file) {
+        try {
+            return doRead(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 
     @Override
     protected List<Resume> getAll() {
+        List<Resume> resumes = new ArrayList<>();
+        for (File file : directory.listFiles()){
+            if (!file.isDirectory()){
+                try {
+                    resumes.add(doRead(file));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
         return null;
     }
 
     @Override
     public void clear() {
-
+        for (File file : directory.listFiles()){
+            if (!file.isDirectory()){
+                file.delete();
+            }
+        }
     }
 
     @Override
     public int size() {
-        return 0;
+        int count = 0;
+        for (File file : directory.listFiles()){
+            if (!file.isDirectory()){
+                count++;
+            }
+        }
+        return count;
     }
 }
