@@ -8,7 +8,7 @@ import com.kuzmin.model.Resume;
 public class ArrayStorage extends AbstractArrayStorage {
 
     @Override
-    public void insert(Resume resume, Object index) {
+    public void insert(Resume resume, Integer index) {
         storage[size] = resume;
     }
 
@@ -18,7 +18,7 @@ public class ArrayStorage extends AbstractArrayStorage {
     }
 
     @Override
-    protected Integer getSearchKey(Object uuid) {
+    protected Integer getSearchKey(String uuid) {
         for (int i = 0; i < size; i++) {
             if (storage[i].getUuid().equals(uuid)) {
                 return i;

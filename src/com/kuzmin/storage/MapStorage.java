@@ -7,36 +7,36 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MapStorage extends AbstractStorage {
+public class MapStorage extends AbstractStorage<String> {
     private Map<String, Resume> resumes = new HashMap<>();
 
     @Override
-    protected void updateResume(Resume resume, Object searchKey) {
-        resumes.put((String) searchKey, resume);// put  и для сохранения и для обновления т.к. если ключ уже есть то значение перезапишется
+    protected void updateResume(Resume resume, String searchKey) {
+        resumes.put(searchKey, resume);// put  и для сохранения и для обновления т.к. если ключ уже есть то значение перезапишется
     }
 
     @Override
-    protected void saveResume(Resume resume, Object searchKey) {
-        resumes.put((String) searchKey, resume);
+    protected void saveResume(Resume resume, String searchKey) {
+        resumes.put(searchKey, resume);
     }
 
     @Override
-    protected void deleteResume(Object searchKey) {
+    protected void deleteResume(String searchKey) {
         resumes.remove(searchKey);
     }
 
     @Override
-    protected String getSearchKey(Object uuid) {
-        return (String) uuid; // возвращаю uuid потому что для мапы не нужен поиск индекса
+    protected String getSearchKey(String uuid) {
+        return uuid; // возвращаю uuid потому что для мапы не нужен поиск индекса
     }
 
     @Override
-    protected boolean checkSearchKey(Object searchKey) {
+    protected boolean checkSearchKey(String searchKey) {
         return resumes.containsKey(searchKey);
     }
 
     @Override
-    protected Resume getResume(Object searchKey) {
+    protected Resume getResume(String searchKey) {
         return resumes.get(searchKey);
     }
 

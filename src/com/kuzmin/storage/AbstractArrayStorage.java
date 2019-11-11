@@ -7,14 +7,14 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-public abstract class AbstractArrayStorage extends AbstractStorage {
+public abstract class AbstractArrayStorage extends AbstractStorage<Integer> {
     protected static final int STORAGE_LIMIT = 10_000;
 
     protected Resume[] storage = new Resume[STORAGE_LIMIT];
 
     protected int size = 0;
 
-    public abstract void insert(Resume resume, Object index);
+    public abstract void insert(Resume resume, Integer index);
 
     public abstract void fillEmptySpace(int index);
 
@@ -27,17 +27,17 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         size = 0;
     }
 
-    public boolean checkSearchKey(Object index) {
-        return (Integer) index >= 0;
+    public boolean checkSearchKey(Integer index) {
+        return index >= 0;
     }
 
     @Override
-    public void updateResume(Resume resume, Object index) {
-        storage[(int) index] = resume;
+    public void updateResume(Resume resume, Integer index) {
+        storage[index] = resume;
     }
 
     @Override
-    public void saveResume(Resume resume, Object searchKey) {
+    public void saveResume(Resume resume, Integer searchKey) {
         if (size == STORAGE_LIMIT) {
             throw new StorageException("Storage is full", resume.getUuid());
         } else {
@@ -47,8 +47,8 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     }
 
     @Override
-    public void deleteResume(Object index) {
-        fillEmptySpace((Integer) index);
+    public void deleteResume(Integer index) {
+        fillEmptySpace(index);
         storage[size - 1] = null;
         size--;
     }
@@ -63,7 +63,7 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         return resumes;
     }
 
-    public Resume getResume(Object index) {
-        return storage[(Integer) index];
+    public Resume getResume(Integer index) {
+        return storage[index];
     }
 }

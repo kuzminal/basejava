@@ -5,7 +5,7 @@ import com.kuzmin.model.Resume;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListStorage extends AbstractStorage {
+public class ListStorage extends AbstractStorage<Integer> {
     private List<Resume> listStorage = new ArrayList<>();
 
     @Override
@@ -14,7 +14,7 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    protected Integer getSearchKey(Object uuid) {
+    protected Integer getSearchKey(String uuid) {
         for (int i = 0; i < listStorage.size(); i++) {
             if (listStorage.get(i).getUuid().equals(uuid)) {
                 return i;
@@ -24,8 +24,8 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    protected Resume getResume(Object searchKey) {
-        return listStorage.get((Integer) searchKey);
+    protected Resume getResume(Integer searchKey) {
+        return listStorage.get(searchKey);
     }
 
     @Override
@@ -34,17 +34,17 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    protected void updateResume(Resume resume, Object searchKey) {
-        listStorage.set((Integer) searchKey, resume);
+    protected void updateResume(Resume resume, Integer searchKey) {
+        listStorage.set(searchKey, resume);
     }
 
     @Override
-    protected void saveResume(Resume resume, Object searchKey) {
+    protected void saveResume(Resume resume, Integer searchKey) {
         listStorage.add(resume);
     }
 
     @Override
-    protected void deleteResume(Object searchKey) {
+    protected void deleteResume(Integer searchKey) {
         listStorage.remove((int) searchKey);
     }
 
@@ -53,7 +53,7 @@ public class ListStorage extends AbstractStorage {
         return listStorage.size();
     }
 
-    public boolean checkSearchKey(Object searchKey) {
+    public boolean checkSearchKey(Integer searchKey) {
         return searchKey != null;
     }
 }

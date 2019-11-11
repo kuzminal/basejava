@@ -7,19 +7,19 @@ import com.kuzmin.model.Resume;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public abstract class AbstractStorage implements Storage {
+public abstract class AbstractStorage<SK> implements Storage {
 
-    protected abstract void updateResume(Resume resume, Object searchKey);
+    protected abstract void updateResume(Resume resume, SK searchKey);
 
-    protected abstract void saveResume(Resume resume, Object searchKey);
+    protected abstract void saveResume(Resume resume, SK searchKey);
 
-    protected abstract void deleteResume(Object searchKey);
+    protected abstract void deleteResume(SK searchKey);
 
-    protected abstract Object getSearchKey(Object searchKey);
+    protected abstract SK getSearchKey(String searchKey);
 
-    protected abstract boolean checkSearchKey(Object searchKey);
+    protected abstract boolean checkSearchKey(SK searchKey);
 
-    protected abstract Resume getResume(Object searchKey);
+    protected abstract Resume getResume(SK searchKey);
 
     protected abstract List<Resume> getAll();
 
@@ -44,16 +44,16 @@ public abstract class AbstractStorage implements Storage {
         return sortResumes(resumes);
     }
 
-    private Object getExistedElement(String uuid) {
-        Object searchKey = getSearchKey(uuid);
+    private SK getExistedElement(String uuid) {
+        SK searchKey = getSearchKey(uuid);
         if (!checkSearchKey(searchKey)) {
             throw new NotExistStorageException(uuid);
         }
         return searchKey;
     }
 
-    private Object getNotExistedSearchKey(String uuid) {
-        Object searchKey = getSearchKey(uuid);
+    private SK getNotExistedSearchKey(String uuid) {
+        SK searchKey = getSearchKey(uuid);
         if (checkSearchKey(searchKey)) {
             throw new ExistStorageException(uuid);
         }
