@@ -1,5 +1,6 @@
 package com.kuzmin.storage;
 
+import com.kuzmin.ResumeTestData;
 import com.kuzmin.exception.ExistStorageException;
 import com.kuzmin.exception.NotExistStorageException;
 import com.kuzmin.model.Resume;
@@ -18,10 +19,10 @@ public abstract class AbstractStorageTest {
     private static final String UUID2 = "uuid2";
     private static final String UUID3 = "uuid3";
     private static final String UUID4 = "uuid4";
-    private static final Resume RESUME1 = new Resume(UUID1, "Ivanov Ivan");
-    private static final Resume RESUME2 = new Resume(UUID2, "Petrov Petr");
-    private static final Resume RESUME3 = new Resume(UUID3, "Sidorov Sidor");
-    private static final Resume RESUME4 = new Resume(UUID4, "Kozimirov Kozimir");
+    private static final Resume RESUME1 = ResumeTestData.fillResume(UUID1, "Ivanov Ivan");
+    private static final Resume RESUME2 = ResumeTestData.fillResume(UUID2, "Petrov Petr");
+    private static final Resume RESUME3 = ResumeTestData.fillResume(UUID3, "Sidorov Sidor");
+    private static final Resume RESUME4 = ResumeTestData.fillResume(UUID4, "Kozimirov Kozimir");
 
     protected AbstractStorageTest(Storage storage) {
         this.storage = storage;
@@ -60,9 +61,9 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void update() {
-        Resume testResume = new Resume("uuid2", "Petrov Petr");
+        Resume testResume = ResumeTestData.fillResume("uuid2", "Petrov Petr");
         storage.update(testResume);
-        assertEquals(RESUME2, storage.get(UUID2));
+        assertEquals(testResume, storage.get(UUID2));
     }
 
     @Test(expected = NotExistStorageException.class)

@@ -9,11 +9,13 @@ public class FileList {
     }
 
     private static void printFilesFromDirectory(File file) {
-        for (File f : file.listFiles()) {
-            if (f.isDirectory()) {
-                printFilesFromDirectory(f);
-            } else {
-                System.out.println(f.getName());
+        if (file.listFiles() != null) {
+            for (File f : file.listFiles()) {
+                if (f.isDirectory()) {
+                    printFilesFromDirectory(f);
+                } else {
+                    System.out.println(f.getName());
+                }
             }
         }
     }

@@ -14,16 +14,17 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     protected AbstractFileStorage(File directory) {
         Objects.requireNonNull(directory, "directory must not be null");
-        if (!directory.isDirectory()){
+        if (!directory.isDirectory()) {
             throw new IllegalArgumentException(directory.getAbsolutePath() + " is not directory");
         }
-        if (!directory.canRead() && directory.canWrite()){
+        if (!directory.canRead() && directory.canWrite()) {
             throw new IllegalArgumentException(directory.getAbsolutePath() + " is not readeble/writeble");
         }
         this.directory = directory;
     }
 
     protected abstract void doWrite(Resume resume, File file) throws IOException;
+
     protected abstract Resume doRead(File file) throws IOException;
 
     @Override
@@ -73,12 +74,14 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     @Override
     protected List<Resume> getAll() {
         List<Resume> resumes = new ArrayList<>();
-        for (File file : directory.listFiles()){
-            if (!file.isDirectory()){
-                try {
-                    resumes.add(doRead(file));
-                } catch (IOException e) {
-                    e.printStackTrace();
+        if (directory.listFiles() != null) {
+            for (File file : directory.listFiles()) {
+                if (!file.isDirectory()) {
+                    try {
+                        resumes.add(doRead(file));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
@@ -87,9 +90,11 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     @Override
     public void clear() {
-        for (File file : directory.listFiles()){
-            if (!file.isDirectory()){
-                file.delete();
+        if (directory.listFiles() != null) {
+            for (File file : directory.listFiles()) {
+                if (!file.isDirectory()) {
+                    file.delete();
+                }
             }
         }
     }
@@ -97,9 +102,11 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     @Override
     public int size() {
         int count = 0;
-        for (File file : directory.listFiles()){
-            if (!file.isDirectory()){
-                count++;
+        if (directory.listFiles() != null) {
+            for (File file : directory.listFiles()) {
+                if (!file.isDirectory()) {
+                    count++;
+                }
             }
         }
         return count;

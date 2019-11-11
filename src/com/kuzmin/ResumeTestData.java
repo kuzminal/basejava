@@ -9,7 +9,11 @@ import java.util.List;
 
 public class ResumeTestData {
     public static void main(String[] args) {
-        Resume resume = new Resume("Ivanov Ivan");
+        System.out.println(fillResume("uuid123", "Ivanov Ivan Ivanovich"));
+    }
+
+    public static Resume fillResume(String uuid, String fullname) {
+        Resume resume = new Resume(uuid, fullname);
         Contact phone = new Contact("+7(123)4567890");
         Contact email = new Contact("mail@gmail.com");
         Contact icq = new Contact("123456789");
@@ -41,14 +45,14 @@ public class ResumeTestData {
         List<Organization> organizations = new ArrayList<>();
         Experience author = new Experience(YearMonth.parse("2013-10"), YearMonth.now(), "Автор проекта.\nСоздание, организация и проведение Java онлайн проектов и стажировок.");
         experiencesJavaOnline.add(author);
-        Organization javaOnline = new Organization("Java Online Projects", experiencesJavaOnline);
+        Organization javaOnline = new Organization("Java Online Projects", "http://javaops.com", experiencesJavaOnline);
         organizations.add(javaOnline);
         Experience seniorDeveloper = new Experience(YearMonth.parse("2014-10"), YearMonth.parse("2016-01"), "Старший разработчик (backend).\nПроектирование и разработка онлайн платформы управления проектами Wrike (Java 8 API, Maven, Spring, MyBatis, Guava, Vaadin, PostgreSQL, Redis). \nДвухфакторная аутентификация, авторизация по OAuth1, OAuth2, JWT SSO.");
         Experience director = new Experience(YearMonth.parse("2016-01"), YearMonth.parse("2018-01"), "Директор компании.\nРуководство компание для достижения светлого будущего");
         List<Experience> wrikeExperience = new ArrayList<>();
         wrikeExperience.add(seniorDeveloper);
         wrikeExperience.add(director);
-        Organization seniorDeveloperOrganization = new Organization("Wrike", wrikeExperience);
+        Organization seniorDeveloperOrganization = new Organization("Wrike","https://wrike.com", wrikeExperience);
         organizations.add(seniorDeveloperOrganization);
         OrganizationSection experience = new OrganizationSection(SectionType.EXPERIENCE, organizations);
         sections.put(SectionType.EXPERIENCE, experience);
@@ -57,17 +61,17 @@ public class ResumeTestData {
         List<Experience> educationCoursera = new ArrayList<>();
         Experience courseraExperience = new Experience(YearMonth.parse("2013-03"), YearMonth.parse("2013-05"), "\"Functional Programming Principles in Scala\" by Martin Odersky");
         educationCoursera.add(courseraExperience);
-        Organization coursera = new Organization("Coursera", educationCoursera);
+        Organization coursera = new Organization("Coursera", "https://coursera.com", educationCoursera);
         educations.add(coursera);
         List<Experience> educationMPTU = new ArrayList<>();
         Experience mptuExperience = new Experience(YearMonth.parse("1984-09"), YearMonth.parse("1987-06"), "Закончил с отличием");
         educationMPTU.add(mptuExperience);
-        Organization mptu = new Organization("Заочная физико-техническая школа при МФТИ", educationCoursera);
+        Organization mptu = new Organization("Заочная физико-техническая школа при МФТИ", "http://mspu.ru", educationCoursera);
         educations.add(mptu);
         OrganizationSection education = new OrganizationSection(SectionType.EDUCATION, educations);
         sections.put(SectionType.EDUCATION, education);
 
         resume.setSections(sections);
-        System.out.println(resume);
+        return resume;
     }
 }
