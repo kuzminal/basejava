@@ -1,8 +1,10 @@
 package com.kuzmin.model;
 
+import java.io.Serializable;
 import java.time.YearMonth;
 
-public class Experience {
+public class Experience implements Serializable {
+    private static final long serialVersionUID = 1L;
     private YearMonth startDate;
     private YearMonth endDate;
     private String description;

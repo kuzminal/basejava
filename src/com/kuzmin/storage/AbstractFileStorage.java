@@ -3,8 +3,7 @@ package com.kuzmin.storage;
 import com.kuzmin.exception.StorageException;
 import com.kuzmin.model.Resume;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -23,14 +22,14 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
         this.directory = directory;
     }
 
-    protected abstract void doWrite(Resume resume, File file) throws IOException;
+    protected abstract void doWrite(Resume resume, OutputStream os) throws IOException;
 
-    protected abstract Resume doRead(File file) throws IOException;
+    protected abstract Resume doRead(InputStream is) throws IOException;
 
     @Override
     protected void updateResume(Resume resume, File file) {
         try {
-            doWrite(resume, file);
+            doWrite(resume, new FileOutputStream(file));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -40,7 +39,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     protected void saveResume(Resume resume, File file) {
         try {
             file.createNewFile();
-            doWrite(resume, file);
+            doWrite(resume, new FileOutputStream(file));
         } catch (IOException e) {
             throw new StorageException("IO error", file.getName(), e);
         }
@@ -64,7 +63,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     @Override
     protected Resume getResume(File file) {
         try {
-            return doRead(file);
+            return doRead(new FileInputStream(file));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -78,14 +77,14 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
             for (File file : directory.listFiles()) {
                 if (!file.isDirectory()) {
                     try {
-                        resumes.add(doRead(file));
+                        resumes.add(doRead(new FileInputStream(file)));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
             }
         }
-        return null;
+        return resumes;
     }
 
     @Override

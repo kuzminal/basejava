@@ -1,12 +1,13 @@
 package com.kuzmin.model;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
  * Initial resume class
  */
-public class Resume implements Comparable<Resume> {
-    // Unique identifier
+public class Resume implements Comparable<Resume>, Serializable {
+    private static final long serialVersionUID = 1L;
     private String uuid;
     private String fullName;
     private EnumMap<ContactType, Contact> contacts;
