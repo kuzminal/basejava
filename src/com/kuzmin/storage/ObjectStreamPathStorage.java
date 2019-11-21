@@ -26,17 +26,11 @@ public class ObjectStreamPathStorage extends AbstractStorage<Path>{
     }
 
     public void doWrite(Resume resume, Object os) throws IOException {
-        try (ObjectOutputStream oos = new ObjectOutputStream((OutputStream) os)) {
-            oos.writeObject(resume);
-        }
+        workingStrategy.doWrite(resume,os);
     }
 
     public Resume doRead(Object is) throws IOException {
-        try (ObjectInputStream ois = new ObjectInputStream((InputStream) is)) {
-            return (Resume) ois.readObject();
-        } catch (ClassNotFoundException e) {
-            throw new StorageException("Error read resume", null, e);
-        }
+        return workingStrategy.doRead(is);
     }
 
     protected void updateResume(Resume resume, Path path) {
