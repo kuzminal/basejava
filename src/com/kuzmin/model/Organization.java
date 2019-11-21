@@ -61,7 +61,7 @@ public class Organization implements Serializable {
         result.append(title + "\n");
         result.append(url + "\n");
         for (Experience experience : experiences){
-            result.append(experience + "\n");
+            result.append(experience);
         }
         return result.toString();
     }

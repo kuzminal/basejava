@@ -7,9 +7,6 @@ import com.kuzmin.model.Resume;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -17,8 +14,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 
 public abstract class AbstractStorageTest {
-    protected static final File STORAGE_DIR = new File("./storage");
-    protected static final Path STORAGE_PATH = Paths.get("./storage");
+    protected static final String STORAGE_DIR = "./storage";
     protected Storage storage;
     private static final String UUID1 = "uuid1";
     private static final String UUID2 = "uuid2";
@@ -67,6 +63,7 @@ public abstract class AbstractStorageTest {
     @Test
     public void update() {
         Resume testResume = ResumeTestData.fillResume("uuid2", "Petrov Petr");
+        testResume.setFullName("Petrov Petr");
         storage.update(testResume);
         assertEquals(testResume, storage.get(UUID2));
     }
@@ -108,6 +105,6 @@ public abstract class AbstractStorageTest {
         testList.add(RESUME2);
         testList.add(RESUME3);
         testList.sort(Comparator.naturalOrder());
-        assertEquals(resumes, testList);
+        assertEquals(testList, resumes);
     }
 }

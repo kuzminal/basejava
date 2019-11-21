@@ -10,42 +10,29 @@ import java.util.Objects;
 
 public class ObjectStreamFileStorage extends AbstractStorage<File> {
     private File directory;
-    WorkingStrategy workingStrategy;
+    IOStrategy IOStrategy;
 
-    protected ObjectStreamFileStorage(File directory) {
+    protected ObjectStreamFileStorage(File directory, IOStrategy IOStrategy) {
         Objects.requireNonNull(directory, "directory must not be null");
         if (!directory.isDirectory() || !directory.canWrite()) {
             throw new IllegalArgumentException(directory.toString() + " is not directory or is not writable");
         }
         this.directory = directory;
-    }
-
-    public void doWrite(Resume resume, Object os) throws IOException {
-        try (ObjectOutputStream oos = new ObjectOutputStream((OutputStream) os)) {
-            oos.writeObject(resume);
-        }
-    }
-
-    public Resume doRead(Object is) throws IOException {
-        try (ObjectInputStream ois = new ObjectInputStream((InputStream) is)) {
-            return (Resume) ois.readObject();
-        } catch (ClassNotFoundException e) {
-            throw new StorageException("Error read resume", null, e);
-        }
+        this.IOStrategy = IOStrategy;
     }
 
     protected void updateResume(Resume resume, File file) {
         try {
-            doWrite(resume, new FileOutputStream(file));
+            IOStrategy.doWrite(resume, new FileOutputStream(file));
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new StorageException("IO error", file.getAbsolutePath(), e);
         }
     }
 
     protected void saveResume(Resume resume, File file) {
         try {
             file.createNewFile();
-            doWrite(resume, new FileOutputStream(file));
+            IOStrategy.doWrite(resume, new FileOutputStream(file));
         } catch (IOException e) {
             throw new StorageException("IO error", file.getAbsolutePath(), e);
         }
@@ -65,22 +52,22 @@ public class ObjectStreamFileStorage extends AbstractStorage<File> {
 
     protected Resume getResume(File file) {
         try {
-            return doRead(new FileInputStream(file));
+            return IOStrategy.doRead(new FileInputStream(file));
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new StorageException("IO error", file.getAbsolutePath(), e);
         }
-        return null;
     }
 
     protected List<Resume> getAll() {
         List<Resume> resumes = new ArrayList<>();
-        if (directory.listFiles() != null) {
-            for (File file : directory.listFiles()) {
+        File[] listFiles = directory.listFiles();
+        if (listFiles != null) {
+            for (File file : listFiles) {
                 if (!file.isDirectory()) {
                     try {
-                        resumes.add(doRead(new FileInputStream(file)));
+                        resumes.add(IOStrategy.doRead(new FileInputStream(file)));
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        throw new StorageException("IO error", file.getAbsolutePath(), e);
                     }
                 }
             }
@@ -89,8 +76,9 @@ public class ObjectStreamFileStorage extends AbstractStorage<File> {
     }
 
     public void clear() {
-        if (directory.listFiles() != null) {
-            for (File file : directory.listFiles()) {
+        File[] listFiles = directory.listFiles();
+        if (listFiles != null) {
+            for (File file : listFiles) {
                 if (!file.isDirectory()) {
                     file.delete();
                 }
@@ -100,8 +88,9 @@ public class ObjectStreamFileStorage extends AbstractStorage<File> {
 
     public int size() {
         int count = 0;
-        if (directory.listFiles() != null) {
-            for (File file : directory.listFiles()) {
+        File[] listFiles = directory.listFiles();
+        if (listFiles != null) {
+            for (File file : listFiles) {
                 if (!file.isDirectory()) {
                     count++;
                 }

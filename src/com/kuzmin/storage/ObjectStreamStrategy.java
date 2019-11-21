@@ -5,15 +5,15 @@ import com.kuzmin.model.Resume;
 
 import java.io.*;
 
-public class ObjectStreamStrategy implements WorkingStrategy {
+public class ObjectStreamStrategy implements IOStrategy {
 
-    public void doWrite(Resume resume, Object os) throws IOException {
+    public void doWrite(Resume resume, OutputStream os) throws IOException {
         try (ObjectOutputStream oos = new ObjectOutputStream((OutputStream) os)) {
             oos.writeObject(resume);
         }
     }
 
-    public Resume doRead(Object is) throws IOException {
+    public Resume doRead(InputStream is) throws IOException {
         try (ObjectInputStream ois = new ObjectInputStream((InputStream) is)) {
             return (Resume) ois.readObject();
         } catch (ClassNotFoundException e) {

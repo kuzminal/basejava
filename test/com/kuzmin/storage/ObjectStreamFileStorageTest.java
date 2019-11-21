@@ -1,7 +1,9 @@
 package com.kuzmin.storage;
 
-public class ObjectStreamFileStorageTest extends AbstractStorageTest{
+import java.io.File;
+
+public class ObjectStreamFileStorageTest extends AbstractStorageTest {
     public ObjectStreamFileStorageTest() {
-        super(new ObjectStreamFileStorage(STORAGE_DIR));
+        super(new ObjectStreamFileStorage(new File(STORAGE_DIR), new ObjectStreamStrategy()));
     }
 }

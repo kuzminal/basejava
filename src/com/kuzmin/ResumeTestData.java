@@ -66,7 +66,7 @@ public class ResumeTestData {
         List<Experience> educationMPTU = new ArrayList<>();
         Experience mptuExperience = new Experience(YearMonth.parse("1984-09"), YearMonth.parse("1987-06"), "Закончил с отличием");
         educationMPTU.add(mptuExperience);
-        Organization mptu = new Organization("Заочная физико-техническая школа при МФТИ", "http://mspu.ru", educationCoursera);
+        Organization mptu = new Organization("Заочная физико-техническая школа при МФТИ", "http://mspu.ru", educationMPTU);
         educations.add(mptu);
         OrganizationSection education = new OrganizationSection(SectionType.EDUCATION, educations);
         sections.put(SectionType.EDUCATION, education);

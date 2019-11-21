@@ -14,37 +14,29 @@ import java.util.stream.Stream;
 
 public class ObjectStreamPathStorage extends AbstractStorage<Path>{
     private Path directory;
-    WorkingStrategy workingStrategy;
+    IOStrategy IOStrategy;
 
-    protected ObjectStreamPathStorage(Path directory) {
+    protected ObjectStreamPathStorage(Path directory, IOStrategy IOStrategy) {
         Objects.requireNonNull(directory, "directory must not be null");
         if (!Files.isDirectory(directory) || !Files.isWritable(directory)) {
             throw new IllegalArgumentException(directory.toString() + " is not directory or is not writable");
         }
         this.directory = directory;
-        this.workingStrategy = new ObjectStreamStrategy();
-    }
-
-    public void doWrite(Resume resume, Object os) throws IOException {
-        workingStrategy.doWrite(resume,os);
-    }
-
-    public Resume doRead(Object is) throws IOException {
-        return workingStrategy.doRead(is);
+        this.IOStrategy = IOStrategy;
     }
 
     protected void updateResume(Resume resume, Path path) {
         try {
-            doWrite(resume, Files.newOutputStream(path));
+            IOStrategy.doWrite(resume, Files.newOutputStream(path));
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new StorageException("IO error", path.toString(), e);
         }
     }
 
     protected void saveResume(Resume resume, Path path) {
         try {
             Files.createFile(path);
-            doWrite(resume, Files.newOutputStream(path));
+            IOStrategy.doWrite(resume, Files.newOutputStream(path));
         } catch (IOException e) {
             throw new StorageException("IO error", path.toString(), e);
         }
@@ -54,7 +46,7 @@ public class ObjectStreamPathStorage extends AbstractStorage<Path>{
         try {
             Files.delete(path);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new StorageException("IO error", path.toString(), e);
         }
     }
 
@@ -68,11 +60,10 @@ public class ObjectStreamPathStorage extends AbstractStorage<Path>{
 
     protected Resume getResume(Path path) {
         try {
-            return doRead(Files.newInputStream(path));
+            return IOStrategy.doRead(Files.newInputStream(path));
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new StorageException("IO error", path.toString(), e);
         }
-        return null;
     }
 
     protected List<Resume> getAll() {
@@ -87,9 +78,9 @@ public class ObjectStreamPathStorage extends AbstractStorage<Path>{
             fileList.filter(Files::isRegularFile)
                     .forEach(p -> {
                         try {
-                            resumes.add(doRead(Files.newInputStream(p)));
+                            resumes.add(IOStrategy.doRead(Files.newInputStream(p)));
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            throw new StorageException("IO error", directory.toString(), e);
                         }
                     });
         }
@@ -101,7 +92,7 @@ public class ObjectStreamPathStorage extends AbstractStorage<Path>{
         try {
             fileList = Files.list(directory);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new StorageException("IO error", directory.toString(), e);
         }
         if (fileList != null) {
             fileList.filter(Files::isRegularFile)
@@ -109,7 +100,7 @@ public class ObjectStreamPathStorage extends AbstractStorage<Path>{
                                 try {
                                     Files.delete(p);
                                 } catch (IOException e) {
-                                    e.printStackTrace();
+                                    throw new StorageException("IO error", directory.toString(), e);
                                 }
                             }
                     );
@@ -122,7 +113,7 @@ public class ObjectStreamPathStorage extends AbstractStorage<Path>{
         try {
             fileList = Files.list(directory);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new StorageException("IO error", directory.toString(), e);
         }
         if (fileList != null) {
             count = fileList.filter(Files::isRegularFile).count();
