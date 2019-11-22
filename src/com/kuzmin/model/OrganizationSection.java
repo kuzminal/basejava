@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Objects;
 
 public class OrganizationSection extends AbstractSection {
-    private static final long serialVersionUID = 1L;
     private List<Organization> organizations;
 
     public OrganizationSection(SectionType sectionType, List<Organization> elements) {
@@ -36,7 +35,7 @@ public class OrganizationSection extends AbstractSection {
     public String toString() {
         StringBuilder organizationsInformation = new StringBuilder();
         for (Organization organization : organizations){
-            organizationsInformation.append(organization.toString() + "\n");
+            organizationsInformation.append(organization.toString()).append("\n");
         }
         return organizationsInformation.toString();
     }

@@ -58,8 +58,8 @@ public class Organization implements Serializable {
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder();
-        result.append(title + "\n");
-        result.append(url + "\n");
+        result.append(title).append("\n");
+        result.append(url).append("\n");
         for (Experience experience : experiences){
             result.append(experience);
         }

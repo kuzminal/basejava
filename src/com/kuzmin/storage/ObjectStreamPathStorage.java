@@ -96,14 +96,7 @@ public class ObjectStreamPathStorage extends AbstractStorage<Path>{
         }
         if (fileList != null) {
             fileList.filter(Files::isRegularFile)
-                    .forEach(p -> {
-                                try {
-                                    Files.delete(p);
-                                } catch (IOException e) {
-                                    throw new StorageException("IO error", directory.toString(), e);
-                                }
-                            }
-                    );
+                    .forEach(this::deleteResume);
         }
     }
 

@@ -20,8 +20,8 @@ public class Resume implements Comparable<Resume>, Serializable {
     public Resume(String uuid, String fullName) {
         this.uuid = uuid;
         this.fullName = fullName;
-        this.contacts = new EnumMap<ContactType, Contact>(ContactType.class);
-        this.sections = new EnumMap<SectionType, AbstractSection>(SectionType.class);
+        this.contacts = new EnumMap<>(ContactType.class);
+        this.sections = new EnumMap<>(SectionType.class);
     }
 
     public EnumMap<ContactType, Contact> getContacts() {
@@ -59,15 +59,15 @@ public class Resume implements Comparable<Resume>, Serializable {
     @Override
     public String toString() {
         StringBuilder printResume = new StringBuilder();
-        printResume.append("Резюме uuid : " + uuid + "\n");
-        printResume.append("ФИО : " + fullName);
+        printResume.append("Резюме uuid : ").append(uuid).append("\n");
+        printResume.append("ФИО : ").append(fullName);
         printResume.append("\n");
         printResume.append("\nКонтакты :\n");
         for (Map.Entry contact : contacts.entrySet()) {
-            printResume.append(contact.getKey() + " : " + contact.getValue().toString()+ "\n");
+            printResume.append(contact.getKey()).append(" : ").append(contact.getValue().toString()).append("\n");
         }
         for (Map.Entry section : sections.entrySet()) {
-            printResume.append("\n" + section.getKey().toString() + " :\n");
+            printResume.append("\n").append(section.getKey().toString()).append(" :\n");
             printResume.append(section.getValue().toString());
         }
         return printResume.toString();

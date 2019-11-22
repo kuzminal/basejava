@@ -23,7 +23,7 @@ public class ObjectStreamFileStorage extends AbstractStorage<File> {
 
     protected void updateResume(Resume resume, File file) {
         try {
-            IOStrategy.doWrite(resume, new FileOutputStream(file));
+            IOStrategy.doWrite(resume, new BufferedOutputStream(new FileOutputStream(file)));
         } catch (IOException e) {
             throw new StorageException("IO error", file.getAbsolutePath(), e);
         }
@@ -32,7 +32,7 @@ public class ObjectStreamFileStorage extends AbstractStorage<File> {
     protected void saveResume(Resume resume, File file) {
         try {
             file.createNewFile();
-            IOStrategy.doWrite(resume, new FileOutputStream(file));
+            IOStrategy.doWrite(resume, new BufferedOutputStream(new FileOutputStream(file)));
         } catch (IOException e) {
             throw new StorageException("IO error", file.getAbsolutePath(), e);
         }
@@ -52,7 +52,7 @@ public class ObjectStreamFileStorage extends AbstractStorage<File> {
 
     protected Resume getResume(File file) {
         try {
-            return IOStrategy.doRead(new FileInputStream(file));
+            return IOStrategy.doRead(new BufferedInputStream(new FileInputStream(file)));
         } catch (IOException e) {
             throw new StorageException("IO error", file.getAbsolutePath(), e);
         }
@@ -65,7 +65,7 @@ public class ObjectStreamFileStorage extends AbstractStorage<File> {
             for (File file : listFiles) {
                 if (!file.isDirectory()) {
                     try {
-                        resumes.add(IOStrategy.doRead(new FileInputStream(file)));
+                        resumes.add(IOStrategy.doRead(new BufferedInputStream(new FileInputStream(file))));
                     } catch (IOException e) {
                         throw new StorageException("IO error", file.getAbsolutePath(), e);
                     }
