@@ -1,5 +1,9 @@
 package com.kuzmin.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.YearMonthDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.YearMonthSerializer;
 import com.kuzmin.util.YearMonthAdapter;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -15,8 +19,12 @@ import java.util.Objects;
 public class Experience implements Serializable {
     private static final long serialVersionUID = 1L;
     @XmlJavaTypeAdapter(YearMonthAdapter.class)
+    @JsonSerialize(using = YearMonthSerializer.class)
+    @JsonDeserialize(using = YearMonthDeserializer.class)
     private YearMonth startDate;
     @XmlJavaTypeAdapter(YearMonthAdapter.class)
+    @JsonSerialize(using = YearMonthSerializer.class)
+    @JsonDeserialize(using = YearMonthDeserializer.class)
     private YearMonth endDate;
     private String description;
 
