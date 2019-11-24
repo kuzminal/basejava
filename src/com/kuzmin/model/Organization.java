@@ -1,9 +1,11 @@
 package com.kuzmin.model;
 
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
+@XmlRootElement
 public class Organization implements Serializable {
     private static final long serialVersionUID = 1L;
     private String title;
@@ -14,6 +16,9 @@ public class Organization implements Serializable {
         this.title = title;
         this.url = url;
         this.experiences = experiences;
+    }
+
+    public Organization() {
     }
 
     public String getTitle() {

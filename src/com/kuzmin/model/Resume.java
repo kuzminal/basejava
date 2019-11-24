@@ -1,17 +1,25 @@
 package com.kuzmin.model;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
-import java.util.*;
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 
 /**
  * Initial resume class
  */
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Resume implements Comparable<Resume>, Serializable {
     private static final long serialVersionUID = 1L;
     private String uuid;
     private String fullName;
-    private EnumMap<ContactType, Contact> contacts;
-    private EnumMap<SectionType, AbstractSection> sections;
+    private Map<ContactType, Contact> contacts;
+    private Map<SectionType, AbstractSection> sections;
 
     public Resume(String fullName) {
         this(UUID.randomUUID().toString(), fullName);
@@ -24,19 +32,22 @@ public class Resume implements Comparable<Resume>, Serializable {
         this.sections = new EnumMap<>(SectionType.class);
     }
 
-    public EnumMap<ContactType, Contact> getContacts() {
+    public Resume() {
+    }
+
+    public Map<ContactType, Contact> getContacts() {
         return contacts;
     }
 
-    public void setContacts(EnumMap<ContactType, Contact> contacts) {
+    public void setContacts(Map<ContactType, Contact> contacts) {
         this.contacts = contacts;
     }
 
-    public EnumMap<SectionType, AbstractSection> getSections() {
+    public Map<SectionType, AbstractSection> getSections() {
         return sections;
     }
 
-    public void setSections(EnumMap<SectionType, AbstractSection> sections) {
+    public void setSections(Map<SectionType, AbstractSection> sections) {
         this.sections = sections;
     }
 

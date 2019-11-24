@@ -4,8 +4,8 @@ import com.kuzmin.model.*;
 
 import java.time.YearMonth;
 import java.util.ArrayList;
-import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 public class ResumeTestData {
     public static void main(String[] args) {
@@ -18,13 +18,13 @@ public class ResumeTestData {
         Contact email = new Contact("mail@gmail.com");
         Contact icq = new Contact("123456789");
         Contact git = new Contact("github.com");
-        EnumMap<ContactType, Contact> contacts = resume.getContacts();
+        Map<ContactType, Contact> contacts = resume.getContacts();
         contacts.put(ContactType.PHONE, phone);
         contacts.put(ContactType.ICQ, icq);
         contacts.put(ContactType.EMAIL, email);
         contacts.put(ContactType.GIT, git);
         resume.setContacts(contacts);
-        EnumMap<SectionType, AbstractSection> sections = resume.getSections();
+        Map<SectionType, AbstractSection> sections = resume.getSections();
         AbstractSection objective = new TextSection(SectionType.OBJECTIVE, "Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям");
         sections.put(SectionType.OBJECTIVE, objective);
         AbstractSection personal = new TextSection(SectionType.PERSONAL, "Аналитический склад ума, сильная логика, креативность, инициативность. Пурист кода и архитектуры.");

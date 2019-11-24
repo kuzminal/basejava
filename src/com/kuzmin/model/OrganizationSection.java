@@ -1,13 +1,18 @@
 package com.kuzmin.model;
 
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.List;
 import java.util.Objects;
 
+@XmlRootElement
 public class OrganizationSection extends AbstractSection {
     private List<Organization> organizations;
 
     public OrganizationSection(SectionType sectionType, List<Organization> elements) {
         this.organizations = elements;
+    }
+
+    public OrganizationSection() {
     }
 
     public List<Organization> getOrganizations() {

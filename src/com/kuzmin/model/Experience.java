@@ -1,12 +1,22 @@
 package com.kuzmin.model;
 
+import com.kuzmin.util.YearMonthAdapter;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.io.Serializable;
 import java.time.YearMonth;
 import java.util.Objects;
 
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Experience implements Serializable {
     private static final long serialVersionUID = 1L;
+    @XmlJavaTypeAdapter(YearMonthAdapter.class)
     private YearMonth startDate;
+    @XmlJavaTypeAdapter(YearMonthAdapter.class)
     private YearMonth endDate;
     private String description;
 
@@ -14,6 +24,9 @@ public class Experience implements Serializable {
         this.startDate = startDate;
         this.endDate = endDate;
         this.description = description;
+    }
+
+    public Experience() {
     }
 
     public YearMonth getStartDate() {

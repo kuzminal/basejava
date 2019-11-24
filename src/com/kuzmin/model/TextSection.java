@@ -1,12 +1,17 @@
 package com.kuzmin.model;
 
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Objects;
 
+@XmlRootElement
 public class TextSection extends AbstractSection {
     private String textInformation;
 
     public TextSection(SectionType sectionType, String textInformation) {
         this.textInformation = textInformation;
+    }
+
+    public TextSection() {
     }
 
     public String getTextInformation() {
