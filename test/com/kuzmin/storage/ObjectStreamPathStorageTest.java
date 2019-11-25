@@ -1,5 +1,7 @@
 package com.kuzmin.storage;
 
+import com.kuzmin.storage.serializer.ObjectStreamStrategy;
+
 import java.nio.file.Paths;
 
 public class ObjectStreamPathStorageTest extends AbstractStorageTest {

@@ -1,4 +1,4 @@
-package com.kuzmin.storage;
+package com.kuzmin.storage.serializer;
 
 import com.kuzmin.model.Resume;
 

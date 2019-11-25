@@ -2,6 +2,7 @@ package com.kuzmin.storage;
 
 import com.kuzmin.exception.StorageException;
 import com.kuzmin.model.Resume;
+import com.kuzmin.storage.serializer.IOStrategy;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -10,7 +11,7 @@ import java.util.Objects;
 
 public class ObjectStreamFileStorage extends AbstractStorage<File> {
     private File directory;
-    IOStrategy IOStrategy;
+    com.kuzmin.storage.serializer.IOStrategy IOStrategy;
 
     protected ObjectStreamFileStorage(File directory, IOStrategy IOStrategy) {
         Objects.requireNonNull(directory, "directory must not be null");

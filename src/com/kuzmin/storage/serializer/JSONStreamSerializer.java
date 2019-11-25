@@ -1,4 +1,4 @@
-package com.kuzmin.storage;
+package com.kuzmin.storage.serializer;
 
 import com.kuzmin.exception.StorageException;
 import com.kuzmin.model.Resume;
@@ -13,7 +13,7 @@ public class JSONStreamSerializer implements IOStrategy {
         try (Writer writer = new OutputStreamWriter(os, StandardCharsets.UTF_8)) {
             JSONParser.write(resume, writer);
         } catch (IOException e) {
-            throw new StorageException("Error with XML parsing", null, e);
+            throw new StorageException("Error with JSON parsing", null, e);
         }
     }
 
@@ -22,7 +22,7 @@ public class JSONStreamSerializer implements IOStrategy {
         try (Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8)){
             return JSONParser.read(reader, Resume.class);
         } catch (IOException e) {
-            throw new StorageException("Error with XML parsing", null, e);
+            throw new StorageException("Error with JSON parsing", null, e);
         }
     }
 }

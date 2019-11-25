@@ -1,5 +1,7 @@
 package com.kuzmin.storage;
 
+import com.kuzmin.storage.serializer.XMLStreamSerializer;
+
 import javax.xml.bind.JAXBException;
 import java.nio.file.Paths;
 

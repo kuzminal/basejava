@@ -1,4 +1,4 @@
-package com.kuzmin.storage;
+package com.kuzmin.storage.serializer;
 
 import com.kuzmin.exception.StorageException;
 import com.kuzmin.model.*;
