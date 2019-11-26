@@ -17,7 +17,7 @@ public class ObjectStreamPathStorage extends AbstractStorage<Path>{
     private Path directory;
     com.kuzmin.storage.serializer.IOStrategy IOStrategy;
 
-    protected ObjectStreamPathStorage(Path directory, IOStrategy IOStrategy) {
+    public ObjectStreamPathStorage(Path directory, IOStrategy IOStrategy) {
         Objects.requireNonNull(directory, "directory must not be null");
         if (!Files.isDirectory(directory) || !Files.isWritable(directory)) {
             throw new IllegalArgumentException(directory.toString() + " is not directory or is not writable");

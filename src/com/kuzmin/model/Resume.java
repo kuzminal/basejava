@@ -109,4 +109,8 @@ public class Resume implements Comparable<Resume>, Serializable {
     public void addContact(ContactType contactType, Contact contact) {
         contacts.put(contactType, contact);
     }
+
+    public void addSection(SectionType sectionType, AbstractSection section) {
+        sections.put(sectionType, section);
+    }
 }
