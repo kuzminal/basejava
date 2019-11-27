@@ -1,7 +1,7 @@
-package com.kuzmin.storage.serializer;
+package com.kuzmin.storage;
 
-import com.kuzmin.storage.AbstractStorageTest;
-import com.kuzmin.storage.ObjectStreamPathStorage;
+import com.kuzmin.storage.serializer.DataStreamSerializer;
+
 import java.nio.file.Paths;
 
 public class DataStreamSerializerTest extends AbstractStorageTest {

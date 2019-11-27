@@ -27,14 +27,24 @@ public class Experience implements Serializable {
     @JsonDeserialize(using = YearMonthDeserializer.class)
     private YearMonth endDate;
     private String description;
+    private String position;
 
-    public Experience(YearMonth startDate, YearMonth endDate, String description){
+    public Experience(YearMonth startDate, YearMonth endDate, String description, String position){
         this.startDate = startDate;
         this.endDate = endDate;
         this.description = description;
+        this.position = position;
     }
 
     public Experience() {
+    }
+
+    public String getPosition() {
+        return position;
+    }
+
+    public void setPosition(String position) {
+        this.position = position;
     }
 
     public YearMonth getStartDate() {
@@ -65,7 +75,7 @@ public class Experience implements Serializable {
     public String toString() {
         String endDateNow = endDate.equals(YearMonth.now()) ? "по наст. врем" : endDate.toString();
         return startDate + " - " + endDateNow +
-                " : " + description;
+                " : " + position + " - " + description;
     }
 
     @Override
@@ -75,11 +85,12 @@ public class Experience implements Serializable {
         Experience that = (Experience) o;
         return Objects.equals(startDate, that.startDate) &&
                 Objects.equals(endDate, that.endDate) &&
-                Objects.equals(description, that.description);
+                Objects.equals(description, that.description) &&
+                Objects.equals(position, that.position);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(startDate, endDate, description);
+        return Objects.hash(startDate, endDate, description, position);
     }
 }
