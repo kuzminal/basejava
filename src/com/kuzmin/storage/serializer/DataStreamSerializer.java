@@ -46,8 +46,16 @@ public class DataStreamSerializer implements IOStrategy {
                         OrganizationSection orgSect = (OrganizationSection) entry.getValue();
                         dos.writeInt(orgSect.getOrganizations().size());
                         for (Organization org : orgSect.getOrganizations()) {
-                            dos.writeUTF(org.getTitle());
-                            dos.writeUTF(org.getUrl());
+                            if (org.getTitle() != null) {
+                                dos.writeUTF(org.getTitle());
+                            } else {
+                                dos.writeUTF("");
+                            }
+                            if (org.getUrl() != null) {
+                                dos.writeUTF(org.getUrl());
+                            } else {
+                                dos.writeUTF("");
+                            }
                             dos.writeInt(org.getExperiences().size());
                             for (Experience exp : org.getExperiences()) {
                                 dos.writeUTF(exp.getStartDate().toString());
@@ -77,7 +85,6 @@ public class DataStreamSerializer implements IOStrategy {
             for (int i = 0; i < size; i++) {
                 String section = dis.readUTF();
                 SectionType sectionType = SectionType.valueOf(section);
-                int sectionSize = 0;
                 switch (sectionType) {
                     case PERSONAL:
                     case OBJECTIVE: {
@@ -86,7 +93,7 @@ public class DataStreamSerializer implements IOStrategy {
                     }
                     case ACHIEVEMENT:
                     case QUALIFICATIONS: {
-                        sectionSize = dis.readInt();
+                        int sectionSize = dis.readInt();
                         List<String> texts = new ArrayList<>();
                         for (int j = 0; j < sectionSize; j++) {
                             texts.add(dis.readUTF());
@@ -96,7 +103,7 @@ public class DataStreamSerializer implements IOStrategy {
                     }
                     case EXPERIENCE:
                     case EDUCATION: {
-                        sectionSize = dis.readInt();
+                        int sectionSize = dis.readInt();
                         List<Organization> organisations = new ArrayList<>();
                         for (int j = 0; j < sectionSize; j++) {
                             Organization organization = new Organization();
@@ -106,14 +113,18 @@ public class DataStreamSerializer implements IOStrategy {
                             List<Experience> expList = new ArrayList<>();
                             for (int a = 0; a < expSize; a++) {
                                 YearMonth startDate = YearMonth.parse(dis.readUTF());
-                                YearMonth endtDate = YearMonth.parse(dis.readUTF());
+                                YearMonth endDate = YearMonth.parse(dis.readUTF());
                                 String description = dis.readUTF();
                                 String position = dis.readUTF();
-                                expList.add(new Experience(startDate, endtDate, description, position));
+                                expList.add(new Experience(startDate, endDate, description, position));
                             }
                             organization.setExperiences(expList);
-                            organization.setTitle(title);
-                            organization.setUrl(url);
+                            if (!title.equals("")) {
+                                organization.setTitle(title);
+                            }
+                            if (!url.equals("")) {
+                                organization.setUrl(url);
+                            }
                             organisations.add(organization);
                         }
                         resume.addSection(sectionType, new OrganizationSection(sectionType, organisations));

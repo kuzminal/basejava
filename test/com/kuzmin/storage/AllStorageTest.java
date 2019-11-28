@@ -1,5 +1,6 @@
 package com.kuzmin.storage;
 
+import com.kuzmin.storage.serializer.GSONStreamSerializerTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -14,7 +15,8 @@ import org.junit.runners.Suite;
         ObjectStreamPathStorageTest.class,
         XMLStreamSerializerTest.class,
         JSONStreamSerializerTest.class,
-        DataStreamSerializerTest.class
+        DataStreamSerializerTest.class,
+        GSONStreamSerializerTest.class
 })
 public class AllStorageTest {
 
