@@ -1,6 +1,5 @@
 package com.kuzmin.storage.serializer;
 
-import com.kuzmin.exception.StorageException;
 import com.kuzmin.model.*;
 
 import java.io.*;
@@ -11,7 +10,7 @@ import java.util.Map;
 
 public class DataStreamSerializer implements IOStrategy {
     @Override
-    public void doWrite(Resume resume, OutputStream os) {
+    public void doWrite(Resume resume, OutputStream os) throws IOException {
         try (DataOutputStream dos = new DataOutputStream(os)) {
             dos.writeUTF(resume.getUuid());
             dos.writeUTF(resume.getFullName());
@@ -68,13 +67,11 @@ public class DataStreamSerializer implements IOStrategy {
                     }
                 }
             }
-        } catch (IOException e) {
-            throw new StorageException("Error with DataStream parsing", null, e);
         }
     }
 
     @Override
-    public Resume doRead(InputStream is) {
+    public Resume doRead(InputStream is) throws IOException {
         try (DataInputStream dis = new DataInputStream(is)) {
             Resume resume = new Resume(dis.readUTF(), dis.readUTF());
             int size = dis.readInt();
@@ -133,8 +130,6 @@ public class DataStreamSerializer implements IOStrategy {
                 }
             }
             return resume;
-        } catch (IOException e) {
-            throw new StorageException("Error with DataStream parsing", null, e);
         }
     }
 }
