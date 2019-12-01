@@ -7,6 +7,7 @@ import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class DataStreamSerializer implements IOStrategy {
     @Override
@@ -16,6 +17,16 @@ public class DataStreamSerializer implements IOStrategy {
             dos.writeUTF(resume.getFullName());
             Map<ContactType, Contact> contacts = resume.getContacts();
             dos.writeInt(contacts.size());
+            WriteEachElement writeEachElement = new WriteEachElement() {
+                @Override
+                public void accept(String str) throws IOException {
+                    if (str != null){
+                        dos.writeUTF(str);
+                    }else {
+                        dos.writeUTF("");
+                    }
+                }
+            };
             for (Map.Entry<ContactType, Contact> entry : resume.getContacts().entrySet()) {
                 dos.writeUTF(entry.getKey().name());
                 dos.writeUTF(entry.getValue().getContact());
@@ -35,9 +46,11 @@ public class DataStreamSerializer implements IOStrategy {
                     case QUALIFICATIONS: {
                         TextListSection textListSection = (TextListSection) entry.getValue();
                         dos.writeInt(textListSection.getTextInformation().size());
-                        for (String text : textListSection.getTextInformation()) {
+                        /*for (String text : textListSection.getTextInformation()) {
                             dos.writeUTF(text);
-                        }
+                        }*/
+                        customForEach(textListSection.getTextInformation(), writeEachElement);
+                        textListSection.getTextInformation().forEach(System.out::println);
                         break;
                     }
                     case EXPERIENCE:
@@ -59,8 +72,16 @@ public class DataStreamSerializer implements IOStrategy {
                             for (Experience exp : org.getExperiences()) {
                                 dos.writeUTF(exp.getStartDate().toString());
                                 dos.writeUTF(exp.getEndDate().toString());
-                                dos.writeUTF(exp.getDescription());
-                                dos.writeUTF(exp.getPosition());
+                                if (exp.getDescription() != null) {
+                                    dos.writeUTF(exp.getDescription());
+                                } else {
+                                    dos.writeUTF("");
+                                }
+                                if (exp.getPosition() != null) {
+                                    dos.writeUTF(exp.getPosition());
+                                } else {
+                                    dos.writeUTF("");
+                                }
                             }
                         }
                         break;
@@ -130,6 +151,14 @@ public class DataStreamSerializer implements IOStrategy {
                 }
             }
             return resume;
+        }
+    }
+
+    static void customForEach(List<String> list, WriteEachElement action) throws IOException{
+        Objects.requireNonNull(action);
+        Objects.requireNonNull(list);
+        for (String str : list) {
+            action.accept(str);
         }
     }
 }

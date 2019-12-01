@@ -30,6 +30,10 @@ public class Experience implements Serializable {
     private String position;
 
     public Experience(YearMonth startDate, YearMonth endDate, String description, String position){
+        Objects.requireNonNull(startDate, "startDate must not be null");
+        Objects.requireNonNull(endDate, "endDate must not be null");
+        Objects.requireNonNull(description, "description must not be null");
+        Objects.requireNonNull(position, "position must not be null");
         this.startDate = startDate;
         this.endDate = endDate;
         this.description = description;
