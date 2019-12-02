@@ -4,10 +4,7 @@ import com.kuzmin.model.*;
 
 import java.io.*;
 import java.time.YearMonth;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class DataStreamSerializer implements IOStrategy {
     @Override
@@ -17,77 +14,81 @@ public class DataStreamSerializer implements IOStrategy {
             dos.writeUTF(resume.getFullName());
             Map<ContactType, Contact> contacts = resume.getContacts();
             dos.writeInt(contacts.size());
-            WriteEachElement writeEachElement = new WriteEachElement() {
+            customForEach(resume.getContacts().entrySet(), new WriteEachElement<Map.Entry<ContactType, Contact>>() {
                 @Override
-                public void accept(String str) throws IOException {
-                    if (str != null){
-                        dos.writeUTF(str);
-                    }else {
-                        dos.writeUTF("");
-                    }
+                public void accept(Map.Entry<ContactType, Contact> collectionElement) throws IOException {
+                    dos.writeUTF(collectionElement.getKey().name());
+                    dos.writeUTF(collectionElement.getValue().getContact());
                 }
-            };
-            for (Map.Entry<ContactType, Contact> entry : resume.getContacts().entrySet()) {
-                dos.writeUTF(entry.getKey().name());
-                dos.writeUTF(entry.getValue().getContact());
-            }
+            });
             Map<SectionType, AbstractSection> sections = resume.getSections();
             dos.writeInt(sections.size());
-            for (Map.Entry<SectionType, AbstractSection> entry : sections.entrySet()) {
-                dos.writeUTF(entry.getKey().name());
-                SectionType sectionType = entry.getKey();
-                switch (sectionType) {
-                    case PERSONAL:
-                    case OBJECTIVE: {
-                        dos.writeUTF(((TextSection) entry.getValue()).getTextInformation());
-                        break;
-                    }
-                    case ACHIEVEMENT:
-                    case QUALIFICATIONS: {
-                        TextListSection textListSection = (TextListSection) entry.getValue();
-                        dos.writeInt(textListSection.getTextInformation().size());
-                        /*for (String text : textListSection.getTextInformation()) {
-                            dos.writeUTF(text);
-                        }*/
-                        customForEach(textListSection.getTextInformation(), writeEachElement);
-                        textListSection.getTextInformation().forEach(System.out::println);
-                        break;
-                    }
-                    case EXPERIENCE:
-                    case EDUCATION: {
-                        OrganizationSection orgSect = (OrganizationSection) entry.getValue();
-                        dos.writeInt(orgSect.getOrganizations().size());
-                        for (Organization org : orgSect.getOrganizations()) {
-                            if (org.getTitle() != null) {
-                                dos.writeUTF(org.getTitle());
-                            } else {
-                                dos.writeUTF("");
-                            }
-                            if (org.getUrl() != null) {
-                                dos.writeUTF(org.getUrl());
-                            } else {
-                                dos.writeUTF("");
-                            }
-                            dos.writeInt(org.getExperiences().size());
-                            for (Experience exp : org.getExperiences()) {
-                                dos.writeUTF(exp.getStartDate().toString());
-                                dos.writeUTF(exp.getEndDate().toString());
-                                if (exp.getDescription() != null) {
-                                    dos.writeUTF(exp.getDescription());
-                                } else {
-                                    dos.writeUTF("");
-                                }
-                                if (exp.getPosition() != null) {
-                                    dos.writeUTF(exp.getPosition());
-                                } else {
-                                    dos.writeUTF("");
-                                }
-                            }
+            customForEach(sections.entrySet(), new WriteEachElement<Map.Entry<SectionType, AbstractSection>>() {
+                @Override
+                public void accept(Map.Entry<SectionType, AbstractSection> entry) throws IOException {
+                    dos.writeUTF(entry.getKey().name());
+                    SectionType sectionType = entry.getKey();
+                    switch (sectionType) {
+                        case PERSONAL:
+                        case OBJECTIVE: {
+                            dos.writeUTF(((TextSection) entry.getValue()).getTextInformation());
+                            break;
                         }
-                        break;
+                        case ACHIEVEMENT:
+                        case QUALIFICATIONS: {
+                            TextListSection textListSection = (TextListSection) entry.getValue();
+                            dos.writeInt(textListSection.getTextInformation().size());
+                            customForEach(textListSection.getTextInformation(), new WriteEachElement<String>() {
+                                @Override
+                                public void accept(String collectionElement) throws IOException {
+                                    dos.writeUTF(collectionElement);
+                                }
+                            });
+                            textListSection.getTextInformation().forEach(System.out::println);
+                            break;
+                        }
+                        case EXPERIENCE:
+                        case EDUCATION: {
+                            OrganizationSection orgSect = (OrganizationSection) entry.getValue();
+                            dos.writeInt(orgSect.getOrganizations().size());
+                            customForEach(orgSect.getOrganizations(), new WriteEachElement<Organization>() {
+                                @Override
+                                public void accept(Organization org) throws IOException {
+                                    if (org.getTitle() != null) {
+                                        dos.writeUTF(org.getTitle());
+                                    } else {
+                                        dos.writeUTF("");
+                                    }
+                                    if (org.getUrl() != null) {
+                                        dos.writeUTF(org.getUrl());
+                                    } else {
+                                        dos.writeUTF("");
+                                    }
+                                    dos.writeInt(org.getExperiences().size());
+                                    customForEach(org.getExperiences(), new WriteEachElement<Experience>() {
+                                        @Override
+                                        public void accept(Experience exp) throws IOException {
+                                            dos.writeUTF(exp.getStartDate().toString());
+                                            dos.writeUTF(exp.getEndDate().toString());
+                                            if (exp.getDescription() != null) {
+                                                dos.writeUTF(exp.getDescription());
+                                            } else {
+                                                dos.writeUTF("");
+                                            }
+                                            if (exp.getPosition() != null) {
+                                                dos.writeUTF(exp.getPosition());
+                                            } else {
+                                                dos.writeUTF("");
+                                            }
+                                        }
+                                    });
+                                }
+                            });
+                            break;
+                        }
                     }
                 }
-            }
+            });
         }
     }
 
@@ -154,11 +155,11 @@ public class DataStreamSerializer implements IOStrategy {
         }
     }
 
-    static void customForEach(List<String> list, WriteEachElement action) throws IOException{
+    static <T> void customForEach(Collection<T> collection, WriteEachElement<T> action) throws IOException {
         Objects.requireNonNull(action);
-        Objects.requireNonNull(list);
-        for (String str : list) {
-            action.accept(str);
+        Objects.requireNonNull(collection);
+        for (T t : collection) {
+            action.accept(t);
         }
     }
 }
