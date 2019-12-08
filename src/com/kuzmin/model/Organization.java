@@ -14,7 +14,6 @@ public class Organization implements Serializable {
 
     public Organization(String title, String url, List<Experience> experiences) {
         Objects.requireNonNull(title, "title must not be null");
-        Objects.requireNonNull(url, "url must not be null");
         Objects.requireNonNull(experiences, "experiences must not be null");
         this.title = title;
         this.url = url;
