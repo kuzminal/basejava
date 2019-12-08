@@ -31,7 +31,6 @@ public class DataStreamSerializer implements IOStrategy {
                     case QUALIFICATIONS: {
                         TextListSection textListSection = (TextListSection) entry.getValue();
                         customWtiteForEach(textListSection.getTextInformation(), dos, dos::writeUTF);
-                        textListSection.getTextInformation().forEach(System.out::println);
                         break;
                     }
                     case EXPERIENCE:
@@ -66,12 +65,8 @@ public class DataStreamSerializer implements IOStrategy {
     public Resume doRead(InputStream is) throws IOException {
         try (DataInputStream dis = new DataInputStream(is)) {
             Resume resume = new Resume(dis.readUTF(), dis.readUTF());
-            int size = dis.readInt();
-            for (int i = 0; i < size; i++) {
-                resume.addContact(ContactType.valueOf(dis.readUTF()), new Contact(dis.readUTF()));
-            }
-            size = dis.readInt();
-            for (int i = 0; i < size; i++) {
+            customReadForEach(dis, () -> resume.addContact(ContactType.valueOf(dis.readUTF()), new Contact(dis.readUTF())));
+            customReadForEach(dis, () -> {
                 String section = dis.readUTF();
                 SectionType sectionType = SectionType.valueOf(section);
                 switch (sectionType) {
@@ -82,31 +77,28 @@ public class DataStreamSerializer implements IOStrategy {
                     }
                     case ACHIEVEMENT:
                     case QUALIFICATIONS: {
-                        int sectionSize = dis.readInt();
                         List<String> texts = new ArrayList<>();
-                        for (int j = 0; j < sectionSize; j++) {
+                        customReadForEach(dis, () -> {
                             texts.add(dis.readUTF());
-                        }
+                        });
                         resume.addSection(sectionType, new TextListSection(sectionType, texts));
                         break;
                     }
                     case EXPERIENCE:
                     case EDUCATION: {
-                        int sectionSize = dis.readInt();
                         List<Organization> organisations = new ArrayList<>();
-                        for (int j = 0; j < sectionSize; j++) {
+                        customReadForEach(dis, () -> {
                             Organization organization = new Organization();
                             String title = dis.readUTF();
                             String url = dis.readUTF();
-                            int expSize = dis.readInt();
                             List<Experience> expList = new ArrayList<>();
-                            for (int a = 0; a < expSize; a++) {
+                            customReadForEach(dis, () -> {
                                 YearMonth startDate = YearMonth.parse(dis.readUTF());
                                 YearMonth endDate = YearMonth.parse(dis.readUTF());
                                 String description = dis.readUTF();
                                 String position = dis.readUTF();
                                 expList.add(new Experience(startDate, endDate, description, position));
-                            }
+                            });
                             organization.setExperiences(expList);
                             if (!title.equals("")) {
                                 organization.setTitle(title);
@@ -115,12 +107,13 @@ public class DataStreamSerializer implements IOStrategy {
                                 organization.setUrl(url);
                             }
                             organisations.add(organization);
-                        }
+                        });
                         resume.addSection(sectionType, new OrganizationSection(sectionType, organisations));
                         break;
                     }
                 }
-            }
+            });
+
             return resume;
         }
     }

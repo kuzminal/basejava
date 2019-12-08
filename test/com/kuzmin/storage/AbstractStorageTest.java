@@ -4,6 +4,7 @@ import com.kuzmin.ResumeTestData;
 import com.kuzmin.exception.ExistStorageException;
 import com.kuzmin.exception.NotExistStorageException;
 import com.kuzmin.model.Resume;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -106,5 +107,10 @@ public abstract class AbstractStorageTest {
         testList.add(RESUME3);
         testList.sort(Comparator.naturalOrder());
         assertEquals(testList, resumes);
+    }
+
+    @After
+    public void clearSout(){
+        System.out.flush();
     }
 }
