@@ -14,11 +14,11 @@ public class ResumeTestData {
 
     public static Resume fillResume(String uuid, String fullname) {
         Resume resume = new Resume(uuid, fullname);
-        Contact phone = new Contact("+7(123)4567890");
-        Contact email = new Contact("mail@gmail.com");
-        Contact icq = new Contact("123456789");
-        Contact git = new Contact("github.com");
-        Map<ContactType, Contact> contacts = resume.getContacts();
+        String phone = "+7(123)4567890";
+        String email = "mail@gmail.com";
+        String icq = "123456789";
+        String git = "github.com";
+        Map<ContactType, String> contacts = resume.getContacts();
         contacts.put(ContactType.PHONE, phone);
         contacts.put(ContactType.ICQ, icq);
         contacts.put(ContactType.EMAIL, email);

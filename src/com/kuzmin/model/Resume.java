@@ -18,7 +18,7 @@ public class Resume implements Comparable<Resume>, Serializable {
     private static final long serialVersionUID = 1L;
     private String uuid;
     private String fullName;
-    private Map<ContactType, Contact> contacts;
+    private Map<ContactType, String> contacts;
     private Map<SectionType, AbstractSection> sections;
 
     public Resume(String fullName) {
@@ -35,11 +35,11 @@ public class Resume implements Comparable<Resume>, Serializable {
     public Resume() {
     }
 
-    public Map<ContactType, Contact> getContacts() {
+    public Map<ContactType, String> getContacts() {
         return contacts;
     }
 
-    public void setContacts(Map<ContactType, Contact> contacts) {
+    public void setContacts(Map<ContactType, String> contacts) {
         this.contacts = contacts;
     }
 
@@ -106,7 +106,7 @@ public class Resume implements Comparable<Resume>, Serializable {
         return Objects.hash(uuid, fullName, contacts, sections);
     }
 
-    public void addContact(ContactType contactType, Contact contact) {
+    public void addContact(ContactType contactType, String contact) {
         contacts.put(contactType, contact);
     }
 

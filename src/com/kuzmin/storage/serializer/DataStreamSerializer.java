@@ -12,10 +12,9 @@ public class DataStreamSerializer implements IOStrategy {
         try (DataOutputStream dos = new DataOutputStream(os)) {
             dos.writeUTF(resume.getUuid());
             dos.writeUTF(resume.getFullName());
-            Map<ContactType, Contact> contacts = resume.getContacts();
             customWtiteForEach(resume.getContacts().entrySet(), dos, collectionElement -> {
                 dos.writeUTF(collectionElement.getKey().name());
-                dos.writeUTF(collectionElement.getValue().getContact());
+                dos.writeUTF(collectionElement.getValue());
             });
             Map<SectionType, AbstractSection> sections = resume.getSections();
             customWtiteForEach(sections.entrySet(), dos, entry -> {
@@ -38,19 +37,23 @@ public class DataStreamSerializer implements IOStrategy {
                         OrganizationSection orgSect = (OrganizationSection) entry.getValue();
                         customWtiteForEach(orgSect.getOrganizations(), dos, org -> {
                             dos.writeUTF(org.getTitle());
+
                             if (org.getUrl() != null) {
                                 dos.writeUTF(org.getUrl());
                             } else {
                                 dos.writeUTF("");
                             }
+
                             customWtiteForEach(org.getExperiences(), dos, exp -> {
                                 dos.writeUTF(exp.getStartDate().toString());
                                 dos.writeUTF(exp.getEndDate().toString());
+
                                 if (exp.getDescription() != null) {
                                     dos.writeUTF(exp.getDescription());
                                 } else {
                                     dos.writeUTF("");
                                 }
+
                                 dos.writeUTF(exp.getPosition());
                             });
                         });
@@ -65,7 +68,7 @@ public class DataStreamSerializer implements IOStrategy {
     public Resume doRead(InputStream is) throws IOException {
         try (DataInputStream dis = new DataInputStream(is)) {
             Resume resume = new Resume(dis.readUTF(), dis.readUTF());
-            customReadForEach(dis, () -> resume.addContact(ContactType.valueOf(dis.readUTF()), new Contact(dis.readUTF())));
+            customReadForEach(dis, () -> resume.addContact(ContactType.valueOf(dis.readUTF()), dis.readUTF()));
             customReadForEach(dis, () -> {
                 String section = dis.readUTF();
                 SectionType sectionType = SectionType.valueOf(section);
@@ -96,16 +99,21 @@ public class DataStreamSerializer implements IOStrategy {
                                 YearMonth startDate = YearMonth.parse(dis.readUTF());
                                 YearMonth endDate = YearMonth.parse(dis.readUTF());
                                 String description = dis.readUTF();
+
+                                if (description.equals("")) {
+                                    description = null;
+                                }
+
                                 String position = dis.readUTF();
                                 expList.add(new Experience(startDate, endDate, description, position));
                             });
                             organization.setExperiences(expList);
-                            if (!title.equals("")) {
-                                organization.setTitle(title);
-                            }
+                            organization.setTitle(title);
+
                             if (!url.equals("")) {
                                 organization.setUrl(url);
                             }
+
                             organisations.add(organization);
                         });
                         resume.addSection(sectionType, new OrganizationSection(sectionType, organisations));
@@ -127,7 +135,7 @@ public class DataStreamSerializer implements IOStrategy {
         }
     }
 
-    <T> void customReadForEach(DataInputStream dis, ReadEachElement<T> action) throws IOException {
+    void customReadForEach(DataInputStream dis, ReadEachElement action) throws IOException {
         Objects.requireNonNull(action);
         int size = dis.readInt();
         for (int i = 0; i < size; i++) {

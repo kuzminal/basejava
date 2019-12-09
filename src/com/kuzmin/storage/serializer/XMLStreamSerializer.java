@@ -13,7 +13,7 @@ public class XMLStreamSerializer implements IOStrategy {
 
     public XMLStreamSerializer() throws JAXBException {
         xmlParser = new XMLParser(
-                Resume.class, Organization.class, Contact.class, Experience.class,
+                Resume.class, Organization.class, Experience.class,
                 TextListSection.class, TextSection.class, OrganizationSection.class
         );
     }
