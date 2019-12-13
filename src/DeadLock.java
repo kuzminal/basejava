@@ -4,13 +4,8 @@ public class DeadLock {
 
 
     public static void main(String[] args) {
-        Thread threadOne = new Thread(() -> {
-            lock(Lock1, Lock2);
-        });
-        Thread threadTwo = new Thread(() -> {
-            lock(Lock2, Lock1);
-        });
-
+        Thread threadOne = new Thread(() -> lock(Lock1, Lock2));
+        Thread threadTwo = new Thread(() -> lock(Lock2, Lock1));
         threadOne.start();
         threadTwo.start();
     }
