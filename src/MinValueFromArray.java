@@ -4,9 +4,16 @@ import java.util.stream.Collectors;
 
 public class MinValueFromArray {
     public static void main(String[] args) {
-        int[] arr = new int[]{6, 3, 9, 4, 4, 9};
+        int[] arr = new int[]{6, 3, 9, 4, 4, 9, 1};
+        List<Integer> listValue = Arrays.stream(arr)
+                .boxed()
+                .collect(Collectors.toList());
         int val = minValue(arr);
         System.out.println(val);
+        List<Integer> oddOrEven = oddOrEven(listValue);
+        for (Integer ineg : oddOrEven) {
+            System.out.println(ineg);
+        }
     }
 
     public static int minValue(int[] values) {
@@ -25,6 +32,17 @@ public class MinValueFromArray {
     }
 
     public static List<Integer> oddOrEven(List<Integer> integers) {
-        return null;
+        int sum = integers.stream()
+                .reduce(0, Integer::sum);
+        if (sum % 2 == 0) {
+            return integers.stream()
+                    .filter(i -> i % 2 == 0)
+                    .collect(Collectors.toList());
+        } else {
+            return integers.stream()
+                    .filter(i -> i % 2 != 0)
+                    .collect(Collectors.toList());
+        }
+
     }
 }
