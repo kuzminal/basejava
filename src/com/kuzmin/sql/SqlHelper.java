@@ -11,14 +11,13 @@ public class SqlHelper {
         this.connectionFactory = connectionFactory;
     }
 
-    public void executeStatement(String sql, PreparedStatement preparedStatement) {
-        executeStatement(sql, preparedStatement);
-    }
-
-    public <T> T executeStatement(String statement, StatementExecutor<T> statementExecutor) throws SQLException {
+    public <T> T executeStatement(String statement, StatementExecutor<T> statementExecutor) {
         try (Connection conn = connectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(statement)) {
             return statementExecutor.execute(stmt);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+        return null;
     }
 }
