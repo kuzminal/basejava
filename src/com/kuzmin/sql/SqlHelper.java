@@ -1,7 +1,5 @@
 package com.kuzmin.sql;
 
-import com.kuzmin.exception.StorageException;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -14,12 +12,13 @@ public class SqlHelper {
     }
 
     public void executeStatement(String sql, PreparedStatement preparedStatement) {
+        executeStatement(sql, preparedStatement);
+    }
+
+    public <T> T executeStatement(String statement, StatementExecutor<T> statementExecutor) throws SQLException {
         try (Connection conn = connectionFactory.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.execute();
-        } catch (
-                SQLException e) {
-            throw new StorageException(e);
+             PreparedStatement stmt = conn.prepareStatement(statement)) {
+            return statementExecutor.execute(stmt);
         }
     }
 }
