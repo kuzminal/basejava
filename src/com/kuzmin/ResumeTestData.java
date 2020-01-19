@@ -1,11 +1,6 @@
 package com.kuzmin;
 
-import com.kuzmin.model.*;
-
-import java.time.YearMonth;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import com.kuzmin.model.Resume;
 
 public class ResumeTestData {
     public static void main(String[] args) {
@@ -14,7 +9,7 @@ public class ResumeTestData {
 
     public static Resume fillResume(String uuid, String fullname) {
         Resume resume = new Resume(uuid, fullname);
-        String phone = "+7(123)4567890";
+        /*String phone = "+7(123)4567890";
         String email = "mail@gmail.com";
         String icq = "123456789";
         String git = "github.com";
@@ -71,7 +66,7 @@ public class ResumeTestData {
         OrganizationSection education = new OrganizationSection(SectionType.EDUCATION, educations);
         sections.put(SectionType.EDUCATION, education);
 
-        resume.setSections(sections);
+        resume.setSections(sections);*/
         return resume;
     }
 }

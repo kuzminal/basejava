@@ -17,7 +17,6 @@ public class MinValueFromArray {
 
     public static int minValue(int[] values) {
         return IntStream.of(values)
-                .boxed()
                 .distinct()
                 .sorted()
                 .reduce(0, (a, b) -> a * 10 + b);
@@ -27,7 +26,7 @@ public class MinValueFromArray {
         int sum = integers.stream()
                 .reduce(0, Integer::sum);
         return integers.stream()
-                .filter(i -> (sum % 2 != 0) == (i % 2 != 0))
+                .filter(i -> (sum % 2 != i % 2))
                 .collect(Collectors.toList());
     }
 }

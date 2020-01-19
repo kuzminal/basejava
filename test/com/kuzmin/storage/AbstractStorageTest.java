@@ -1,5 +1,6 @@
 package com.kuzmin.storage;
 
+import com.kuzmin.Config;
 import com.kuzmin.ResumeTestData;
 import com.kuzmin.exception.ExistStorageException;
 import com.kuzmin.exception.NotExistStorageException;
@@ -15,7 +16,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 
 public abstract class AbstractStorageTest {
-    protected static final String STORAGE_DIR = "./storage";
+    protected static final String STORAGE_DIR = Config.get().getStorageDir();
     protected Storage storage;
     private static final String UUID1 = "uuid1";
     private static final String UUID2 = "uuid2";
