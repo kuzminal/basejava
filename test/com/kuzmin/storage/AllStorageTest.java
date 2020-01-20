@@ -16,7 +16,8 @@ import org.junit.runners.Suite;
         XMLStreamSerializerTest.class,
         JSONStreamSerializerTest.class,
         DataStreamSerializerTest.class,
-        GSONStreamSerializerTest.class
+        GSONStreamSerializerTest.class,
+        SqlStorageTest.class
 })
 public class AllStorageTest {
 

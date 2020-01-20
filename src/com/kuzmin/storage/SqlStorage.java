@@ -1,11 +1,16 @@
 package com.kuzmin.storage;
 
+import com.kuzmin.exception.ExistStorageException;
 import com.kuzmin.exception.NotExistStorageException;
 import com.kuzmin.exception.StorageException;
 import com.kuzmin.model.Resume;
 import com.kuzmin.sql.SqlHelper;
+import org.postgresql.util.PSQLException;
 
-import java.sql.*;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +43,11 @@ public class SqlStorage implements Storage {
         sqlHelper.executeStatement("INSERT INTO resume (uuid, full_name) VALUES (?, ?)", stmt -> {
             stmt.setString(1, resume.getUuid());
             stmt.setString(2, resume.getFullName());
-            stmt.execute();
+            try {
+                stmt.execute();
+            } catch (PSQLException e) {
+                throw new ExistStorageException(resume.getUuid());
+            }
             return null;
         });
     }
@@ -59,7 +68,9 @@ public class SqlStorage implements Storage {
     public void delete(String uuid) {
         sqlHelper.executeStatement("DELETE FROM resume WHERE uuid=?", stmt -> {
             stmt.setString(1, uuid);
-            stmt.execute();
+            if (stmt.executeUpdate() == 0) {
+                throw new NotExistStorageException(uuid);
+            }
             return null;
         });
     }
