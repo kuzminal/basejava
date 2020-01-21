@@ -1,11 +1,9 @@
 package com.kuzmin.storage;
 
-import com.kuzmin.exception.ExistStorageException;
 import com.kuzmin.exception.NotExistStorageException;
 import com.kuzmin.exception.StorageException;
 import com.kuzmin.model.Resume;
 import com.kuzmin.sql.SqlHelper;
-import org.postgresql.util.PSQLException;
 
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -43,11 +41,7 @@ public class SqlStorage implements Storage {
         sqlHelper.executeStatement("INSERT INTO resume (uuid, full_name) VALUES (?, ?)", stmt -> {
             stmt.setString(1, resume.getUuid());
             stmt.setString(2, resume.getFullName());
-            try {
-                stmt.execute();
-            } catch (PSQLException e) {
-                throw new ExistStorageException(resume.getUuid());
-            }
+            stmt.execute();
             return null;
         });
     }

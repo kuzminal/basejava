@@ -1,6 +1,8 @@
 package com.kuzmin.sql;
 
+import com.kuzmin.exception.ExistStorageException;
 import com.kuzmin.exception.StorageException;
+import org.postgresql.util.PSQLException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -17,6 +19,12 @@ public class SqlHelper {
         try (Connection conn = connectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(statement)) {
             return statementExecutor.execute(stmt);
+        } catch (PSQLException pe) {
+            if (pe.getSQLState().equals("23505")) {
+                throw new ExistStorageException(pe.getMessage());
+            } else {
+                throw new StorageException(pe);
+            }
         } catch (SQLException e) {
             throw new StorageException(e);
         }
