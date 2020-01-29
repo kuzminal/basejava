@@ -1,6 +1,9 @@
 package com.kuzmin;
 
+import com.kuzmin.model.ContactType;
 import com.kuzmin.model.Resume;
+
+import java.util.Map;
 
 public class ResumeTestData {
     public static void main(String[] args) {
@@ -9,7 +12,7 @@ public class ResumeTestData {
 
     public static Resume fillResume(String uuid, String fullname) {
         Resume resume = new Resume(uuid, fullname);
-        /*String phone = "+7(123)4567890";
+        String phone = "+7(123)4567890";
         String email = "mail@gmail.com";
         String icq = "123456789";
         String git = "github.com";
@@ -19,7 +22,7 @@ public class ResumeTestData {
         contacts.put(ContactType.EMAIL, email);
         contacts.put(ContactType.GIT, git);
         resume.setContacts(contacts);
-        Map<SectionType, AbstractSection> sections = resume.getSections();
+        /*Map<SectionType, AbstractSection> sections = resume.getSections();
         AbstractSection objective = new TextSection(SectionType.OBJECTIVE, "Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям");
         sections.put(SectionType.OBJECTIVE, objective);
         AbstractSection personal = new TextSection(SectionType.PERSONAL, "Аналитический склад ума, сильная логика, креативность, инициативность. Пурист кода и архитектуры.");
