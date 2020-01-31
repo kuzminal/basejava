@@ -23,26 +23,29 @@ public class SqlStorage implements Storage {
     @Override
     public void clear() {
         sqlHelper.executeStatement("DELETE FROM resume", PreparedStatement::execute);
-        sqlHelper.executeStatement("DELETE FROM contact", PreparedStatement::execute);
     }
 
     @Override
     public void update(Resume resume) {
-        sqlHelper.executeStatement("UPDATE resume SET full_name=? WHERE uuid=?", stmt -> {
-            stmt.setString(1, resume.getFullName());
-            stmt.setString(2, resume.getUuid());
-            if (stmt.executeUpdate() == 0) {
-                throw new NotExistStorageException(resume.getUuid());
+        sqlHelper.executeTransactional(connection -> {
+            try (PreparedStatement ps = connection.prepareStatement("UPDATE resume SET full_name=? WHERE uuid=?")) {
+                ps.setString(1, resume.getFullName());
+                ps.setString(2, resume.getUuid());
+                if (ps.executeUpdate() == 0) {
+                    throw new NotExistStorageException(resume.getUuid());
+                }
             }
             return null;
         });
         for (Map.Entry<ContactType, String> e : resume.getContacts().entrySet()) {
-            sqlHelper.executeStatement("UPDATE contact SET value=? " +
-                                                "WHERE resume_uuid=? AND type=?", stmt -> {
-                stmt.setString(1, e.getValue());
-                stmt.setString(2, resume.getUuid());
-                stmt.setString(3, e.getKey().name());
-                stmt.executeUpdate();
+            sqlHelper.executeTransactional(connection -> {
+                try (PreparedStatement ps = connection.prepareStatement("UPDATE contact SET value=? " +
+                        "WHERE resume_uuid=? AND type=?")) {
+                    ps.setString(1, e.getValue());
+                    ps.setString(2, resume.getUuid());
+                    ps.setString(3, e.getKey().name());
+                    ps.executeUpdate();
+                }
                 return null;
             });
         }
@@ -50,18 +53,22 @@ public class SqlStorage implements Storage {
 
     @Override
     public void save(Resume resume) {
-        sqlHelper.executeStatement("INSERT INTO resume (uuid, full_name) VALUES (?, ?)", stmt -> {
-            stmt.setString(1, resume.getUuid());
-            stmt.setString(2, resume.getFullName());
-            stmt.execute();
+        sqlHelper.executeTransactional(connection -> {
+            try (PreparedStatement ps = connection.prepareStatement("INSERT INTO resume (uuid, full_name) VALUES (?, ?)")) {
+                ps.setString(1, resume.getUuid());
+                ps.setString(2, resume.getFullName());
+                ps.execute();
+            }
             return null;
         });
         for (Map.Entry<ContactType, String> e : resume.getContacts().entrySet()) {
-            sqlHelper.executeStatement("INSERT INTO contact (resume_uuid, type, value) VALUES (?, ?, ?)", stmt -> {
-                stmt.setString(1, resume.getUuid());
-                stmt.setString(2, e.getKey().name());
-                stmt.setString(3, e.getValue());
-                stmt.execute();
+            sqlHelper.executeTransactional(connection -> {
+                try (PreparedStatement ps = connection.prepareStatement("INSERT INTO contact (resume_uuid, type, value) VALUES (?, ?, ?)")) {
+                    ps.setString(1, resume.getUuid());
+                    ps.setString(2, e.getKey().name());
+                    ps.setString(3, e.getValue());
+                    ps.execute();
+                }
                 return null;
             });
         }
@@ -102,7 +109,7 @@ public class SqlStorage implements Storage {
     @Override
     public List<Resume> getAllSorted() {
         MapStorage resumeList = sqlHelper.executeStatement("SELECT * FROM resume r " +
-                                                                    " ORDER BY uuid", stmt -> {
+                " ORDER BY uuid", stmt -> {
             ResultSet rs = stmt.executeQuery();
             MapStorage resumes = new MapStorage();
             while (rs.next()) {
