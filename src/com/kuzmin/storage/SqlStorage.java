@@ -37,18 +37,8 @@ public class SqlStorage implements Storage {
             }
             return null;
         });
-        for (Map.Entry<ContactType, String> e : resume.getContacts().entrySet()) {
-            sqlHelper.executeTransactional(connection -> {
-                try (PreparedStatement ps = connection.prepareStatement("UPDATE contact SET value=? " +
-                        "WHERE resume_uuid=? AND type=?")) {
-                    ps.setString(1, e.getValue());
-                    ps.setString(2, resume.getUuid());
-                    ps.setString(3, e.getKey().name());
-                    ps.executeUpdate();
-                }
-                return null;
-            });
-        }
+        changeContacts(resume, "UPDATE contact SET value=? " +
+                "WHERE resume_uuid=? AND type=?");
     }
 
     @Override
@@ -61,17 +51,7 @@ public class SqlStorage implements Storage {
             }
             return null;
         });
-        for (Map.Entry<ContactType, String> e : resume.getContacts().entrySet()) {
-            sqlHelper.executeTransactional(connection -> {
-                try (PreparedStatement ps = connection.prepareStatement("INSERT INTO contact (resume_uuid, type, value) VALUES (?, ?, ?)")) {
-                    ps.setString(1, resume.getUuid());
-                    ps.setString(2, e.getKey().name());
-                    ps.setString(3, e.getValue());
-                    ps.execute();
-                }
-                return null;
-            });
-        }
+        changeContacts(resume, "INSERT INTO contact (resume_uuid, type, value) VALUES (?, ?, ?)");
     }
 
     @Override
@@ -142,5 +122,19 @@ public class SqlStorage implements Storage {
             }
             return Integer.parseInt(rs.getString("count"));
         });
+    }
+
+    private void changeContacts(Resume resume, String statement) {
+        for (Map.Entry<ContactType, String> e : resume.getContacts().entrySet()) {
+            sqlHelper.executeTransactional(connection -> {
+                try (PreparedStatement ps = connection.prepareStatement(statement)) {
+                    ps.setString(1, resume.getUuid());
+                    ps.setString(2, e.getKey().name());
+                    ps.setString(3, e.getValue());
+                    ps.execute();
+                }
+                return null;
+            });
+        }
     }
 }
