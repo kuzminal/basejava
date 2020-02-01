@@ -37,15 +37,15 @@ public class SqlHelper {
                 T res = executor.execute(conn);
                 conn.commit();
                 return res;
+            } catch (PSQLException pe) {
+                if (pe.getSQLState().equals("23505")) {
+                    throw new ExistStorageException(pe.getMessage());
+                } else {
+                    throw new StorageException(pe);
+                }
             } catch (SQLException e) {
                 conn.rollback();
                 throw new StorageException(e);
-            }
-        } catch (PSQLException pe) {
-            if (pe.getSQLState().equals("23505")) {
-                throw new ExistStorageException(pe.getMessage());
-            } else {
-                throw new StorageException(pe);
             }
         } catch (SQLException e) {
             throw new StorageException(e);

@@ -89,7 +89,9 @@ public class SqlStorage implements Storage {
             do {
                 String value = rs.getString("value");
                 ContactType type = ContactType.valueOf(rs.getString("type"));
-                resume.addContact(type, value);
+                if (value != null) {
+                    resume.addContact(type, value);
+                }
             } while (rs.next());
             return resume;
         });
