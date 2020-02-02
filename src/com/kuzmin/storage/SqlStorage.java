@@ -93,14 +93,14 @@ public class SqlStorage implements Storage {
         Map<String, Resume> resumes = new LinkedHashMap<>();
         return sqlHelper.executeTransactional(connection -> {
             try (PreparedStatement ps = connection.prepareStatement("SELECT * FROM resume r " +
-                    " ORDER BY uuid")){
+                    " ORDER BY uuid")) {
                 ResultSet rs = ps.executeQuery();
                 while (rs.next()) {
                     Resume resume = new Resume(rs.getString("uuid"), rs.getString("full_name"));
                     resumes.put(resume.getUuid(), resume);
                 }
             }
-            try (PreparedStatement ps = connection.prepareStatement("SELECT * FROM contact c ")){
+            try (PreparedStatement ps = connection.prepareStatement("SELECT * FROM contact c ")) {
                 ResultSet rs = ps.executeQuery();
                 while (rs.next()) {
                     String uuid = rs.getString("resume_uuid");
@@ -123,16 +123,15 @@ public class SqlStorage implements Storage {
         });
     }
 
-    private void manageContacts(Resume resume, String statement, Connection conn) {
-        for (Map.Entry<ContactType, String> e : resume.getContacts().entrySet()) {
-            try (PreparedStatement ps = conn.prepareStatement(statement)) {
+    private void manageContacts(Resume resume, String statement, Connection conn) throws SQLException {
+        try (PreparedStatement ps = conn.prepareStatement(statement)) {
+            for (Map.Entry<ContactType, String> e : resume.getContacts().entrySet()) {
                 ps.setString(1, resume.getUuid());
                 ps.setString(2, e.getKey().name());
                 ps.setString(3, e.getValue());
-                ps.execute();
-            } catch (SQLException ex) {
-                throw new StorageException(ex);
+                ps.addBatch();
             }
+            ps.executeBatch();
         }
     }
 }
