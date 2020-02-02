@@ -6,10 +6,9 @@ import com.kuzmin.model.ContactType;
 import com.kuzmin.model.Resume;
 import com.kuzmin.sql.SqlHelper;
 
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,10 +34,10 @@ public class SqlStorage implements Storage {
                     throw new NotExistStorageException(resume.getUuid());
                 }
             }
+            manageContacts(resume, "UPDATE contact SET value=? " +
+                    "WHERE resume_uuid=? AND type=?", connection);
             return null;
         });
-        changeContacts(resume, "UPDATE contact SET value=? " +
-                "WHERE resume_uuid=? AND type=?");
     }
 
     @Override
@@ -49,9 +48,10 @@ public class SqlStorage implements Storage {
                 ps.setString(2, resume.getFullName());
                 ps.execute();
             }
+            manageContacts(resume, "INSERT INTO contact (resume_uuid, type, value) VALUES (?, ?, ?)", connection);
             return null;
         });
-        changeContacts(resume, "INSERT INTO contact (resume_uuid, type, value) VALUES (?, ?, ?)");
+
     }
 
     @Override
@@ -90,27 +90,26 @@ public class SqlStorage implements Storage {
 
     @Override
     public List<Resume> getAllSorted() {
-        MapStorage resumeList = sqlHelper.executeStatement("SELECT * FROM resume r " +
-                " ORDER BY uuid", stmt -> {
-            ResultSet rs = stmt.executeQuery();
-            MapStorage resumes = new MapStorage();
-            while (rs.next()) {
-                Resume resume = new Resume(rs.getString("uuid"), rs.getString("full_name"));
-                resumes.save(resume);
+        Map<String, Resume> resumes = new LinkedHashMap<>();
+        return sqlHelper.executeTransactional(connection -> {
+            try (PreparedStatement ps = connection.prepareStatement("SELECT * FROM resume r " +
+                    " ORDER BY uuid")){
+                ResultSet rs = ps.executeQuery();
+                while (rs.next()) {
+                    Resume resume = new Resume(rs.getString("uuid"), rs.getString("full_name"));
+                    resumes.put(resume.getUuid(), resume);
+                }
             }
-            return resumes;
+            try (PreparedStatement ps = connection.prepareStatement("SELECT * FROM contact c ")){
+                ResultSet rs = ps.executeQuery();
+                while (rs.next()) {
+                    String uuid = rs.getString("resume_uuid");
+                    Resume resume = resumes.get(uuid);
+                    resume.addContact(ContactType.valueOf(rs.getString("type")), rs.getString("value"));
+                }
+            }
+            return new ArrayList<>(resumes.values());
         });
-        List<Resume> resumes = sqlHelper.executeStatement("SELECT * FROM contact c ",
-                stmt -> {
-                    ResultSet rs = stmt.executeQuery();
-                    while (rs.next()) {
-                        String uuid = rs.getString("resume_uuid");
-                        Resume resume = resumeList.get(uuid);
-                        resume.addContact(ContactType.valueOf(rs.getString("type")), rs.getString("value"));
-                    }
-                    return resumeList.getAllSorted();
-                });
-        return resumes;
     }
 
     @Override
@@ -120,21 +119,20 @@ public class SqlStorage implements Storage {
             if (!rs.next()) {
                 throw new StorageException("Table is empty", "");
             }
-            return Integer.parseInt(rs.getString("count"));
+            return rs.getInt("count");
         });
     }
 
-    private void changeContacts(Resume resume, String statement) {
+    private void manageContacts(Resume resume, String statement, Connection conn) {
         for (Map.Entry<ContactType, String> e : resume.getContacts().entrySet()) {
-            sqlHelper.executeTransactional(connection -> {
-                try (PreparedStatement ps = connection.prepareStatement(statement)) {
-                    ps.setString(1, resume.getUuid());
-                    ps.setString(2, e.getKey().name());
-                    ps.setString(3, e.getValue());
-                    ps.execute();
-                }
-                return null;
-            });
+            try (PreparedStatement ps = conn.prepareStatement(statement)) {
+                ps.setString(1, resume.getUuid());
+                ps.setString(2, e.getKey().name());
+                ps.setString(3, e.getValue());
+                ps.execute();
+            } catch (SQLException ex) {
+                throw new StorageException(ex);
+            }
         }
     }
 }
