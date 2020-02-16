@@ -1,8 +1,9 @@
 package com.kuzmin;
 
-import com.kuzmin.model.ContactType;
-import com.kuzmin.model.Resume;
+import com.kuzmin.model.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class ResumeTestData {
@@ -22,7 +23,7 @@ public class ResumeTestData {
         contacts.put(ContactType.EMAIL, email);
         contacts.put(ContactType.GIT, git);
         resume.setContacts(contacts);
-        /*Map<SectionType, AbstractSection> sections = resume.getSections();
+        Map<SectionType, AbstractSection> sections = resume.getSections();
         AbstractSection objective = new TextSection(SectionType.OBJECTIVE, "Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям");
         sections.put(SectionType.OBJECTIVE, objective);
         AbstractSection personal = new TextSection(SectionType.PERSONAL, "Аналитический склад ума, сильная логика, креативность, инициативность. Пурист кода и архитектуры.");
@@ -39,7 +40,7 @@ public class ResumeTestData {
         qualifications.add("DB: PostgreSQL(наследование, pgplsql, PL/Python), Redis (Jedis), H2, Oracle,");
         AbstractSection qualification = new TextListSection(SectionType.QUALIFICATIONS, qualifications);
         sections.put(SectionType.QUALIFICATIONS, qualification);
-        List<Experience> experiencesJavaOnline = new ArrayList<>();
+        /*List<Experience> experiencesJavaOnline = new ArrayList<>();
         List<Organization> organizations = new ArrayList<>();
         Experience author = new Experience(YearMonth.parse("2013-10"), YearMonth.now(), "Создание, организация и проведение Java онлайн проектов и стажировок.", "Автор проекта");
         experiencesJavaOnline.add(author);
@@ -67,9 +68,9 @@ public class ResumeTestData {
         Organization mptu = new Organization("Заочная физико-техническая школа при МФТИ", "http://mspu.ru", educationMPTU);
         educations.add(mptu);
         OrganizationSection education = new OrganizationSection(SectionType.EDUCATION, educations);
-        sections.put(SectionType.EDUCATION, education);
+        sections.put(SectionType.EDUCATION, education);*/
 
-        resume.setSections(sections);*/
+        resume.setSections(sections);
         return resume;
     }
 }
