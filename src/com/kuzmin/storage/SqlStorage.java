@@ -144,6 +144,35 @@ public class SqlStorage implements Storage {
                     resume.addContact(ContactType.valueOf(rs.getString("type")), rs.getString("value"));
                 }
             }
+            try (PreparedStatement ps = connection.prepareStatement("SELECT *  FROM section s")) {
+                ResultSet rs = ps.executeQuery();
+                while (rs.next()) {
+                    String content = rs.getString("content");
+                    String uuid = rs.getString("resume_uuid");
+                    Resume resume = resumes.get(uuid);
+                    SectionType sectionType = SectionType.valueOf(rs.getString("type"));
+                    if (content != null) {
+                        switch (sectionType) {
+                            case PERSONAL:
+                            case OBJECTIVE: {
+                                resume.addSection(sectionType, new TextSection(sectionType, content));
+                                break;
+                            }
+                            case ACHIEVEMENT:
+                            case QUALIFICATIONS: {
+                                TextListSection listSection = new TextListSection();
+                                List<String> listOfContent = Arrays.asList(content.split("\n"));
+                                resume.addSection(sectionType, new TextListSection(sectionType, listOfContent));
+                                break;
+                            }
+                            case EXPERIENCE:
+                            case EDUCATION: {
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
             return new ArrayList<>(resumes.values());
         });
     }

@@ -28,7 +28,7 @@ public class ResumeServlet extends HttpServlet {
                 "<html><head>" +
                 "<meta http-equiv=\"Content-Type\" " +
                 "content=\"text/html; charset=UTF-8\"> " +
-                "<title>Пример сервлета!</title>" +
+                "<title>Resumes</title>" +
                 "</head>" +
                 "<body>" +
                 "<h1>Список резюме</h1>" +
