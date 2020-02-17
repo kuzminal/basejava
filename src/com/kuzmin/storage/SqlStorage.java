@@ -1,9 +1,11 @@
 package com.kuzmin.storage;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.kuzmin.exception.NotExistStorageException;
 import com.kuzmin.exception.StorageException;
 import com.kuzmin.model.*;
 import com.kuzmin.sql.SqlHelper;
+import com.kuzmin.util.JSONParser;
 
 import java.sql.*;
 import java.util.*;
@@ -91,6 +93,8 @@ public class SqlStorage implements Storage {
                     String content = rs.getString("content");
                     makeSection(resume, rs, content);
                 }
+            } catch (JsonProcessingException e) {
+                throw new StorageException(e);
             }
             return resume;
         });
@@ -135,6 +139,8 @@ public class SqlStorage implements Storage {
                     Resume resume = resumes.get(uuid);
                     makeSection(resume, rs, content);
                 }
+            } catch (JsonProcessingException e) {
+                throw new StorageException(e);
             }
             return new ArrayList<>(resumes.values());
         });
@@ -182,26 +188,30 @@ public class SqlStorage implements Storage {
             for (Map.Entry<SectionType, AbstractSection> e : resume.getSections().entrySet()) {
                 ps.setString(1, resume.getUuid());
                 ps.setString(2, e.getKey().name());
-                ps.setString(3, e.getValue().toString());
+                ps.setString(3, JSONParser.write(e.getValue()));
                 ps.addBatch();
             }
             ps.executeBatch();
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
         }
     }
 
-    private void makeSection(Resume resume, ResultSet rs, String content) throws SQLException {
+    private void makeSection(Resume resume, ResultSet rs, String content) throws SQLException, JsonProcessingException {
         SectionType sectionType = SectionType.valueOf(rs.getString("type"));
         if (content != null) {
             switch (sectionType) {
                 case PERSONAL:
                 case OBJECTIVE: {
-                    resume.addSection(sectionType, new TextSection(sectionType, content));
+                    TextSection textSection = JSONParser.read(content, TextSection.class);
+                    resume.addSection(sectionType, textSection);
                     break;
                 }
                 case ACHIEVEMENT:
                 case QUALIFICATIONS: {
-                    List<String> listOfContent = Arrays.asList(content.split("\n"));
-                    resume.addSection(sectionType, new TextListSection(sectionType, listOfContent));
+                   // List<String> listOfContent = Arrays.asList(content.split("\n"));
+                    TextListSection textSection = JSONParser.read(content, TextListSection.class);
+                    resume.addSection(sectionType, textSection);
                     break;
                 }
                 case EXPERIENCE:
