@@ -12,6 +12,11 @@ public class SqlStorage implements Storage {
     public final SqlHelper sqlHelper;
 
     public SqlStorage(String url, String dbUser, String dbPassword) throws SQLException {
+        try {
+            Class.forName("org.postgresql.Driver");    //загружаем драйвер
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
         sqlHelper = new SqlHelper(() -> DriverManager.getConnection(url, dbUser, dbPassword));
     }
 
@@ -68,15 +73,13 @@ public class SqlStorage implements Storage {
             }
 
             try (PreparedStatement ps = connection.prepareStatement("SELECT *  FROM contact c " +
-                    " WHERE c.resume_uuid =? ")){
+                    " WHERE c.resume_uuid =? ")) {
                 ps.setString(1, uuid);
                 ResultSet rs = ps.executeQuery();
-                while (rs.next()){
+                while (rs.next()) {
                     String value = rs.getString("value");
                     ContactType type = ContactType.valueOf(rs.getString("type"));
-                    if (value != null) {
-                        resume.addContact(type, value);
-                    }
+                    resume.addContact(type, value);
                 }
             }
 
@@ -86,27 +89,7 @@ public class SqlStorage implements Storage {
                 ResultSet rs = ps.executeQuery();
                 while (rs.next()) {
                     String content = rs.getString("content");
-                    SectionType sectionType = SectionType.valueOf(rs.getString("type"));
-                    if (content != null) {
-                        switch (sectionType) {
-                            case PERSONAL:
-                            case OBJECTIVE: {
-                                resume.addSection(sectionType, new TextSection(sectionType, content));
-                                break;
-                            }
-                            case ACHIEVEMENT:
-                            case QUALIFICATIONS: {
-                                TextListSection listSection = new TextListSection();
-                                List<String> listOfContent = Arrays.asList(content.split("\n"));
-                                resume.addSection(sectionType, new TextListSection(sectionType, listOfContent));
-                                break;
-                            }
-                            case EXPERIENCE:
-                            case EDUCATION: {
-                                break;
-                            }
-                        }
-                    }
+                    makeSection(resume, rs, content);
                 }
             }
             return resume;
@@ -150,27 +133,7 @@ public class SqlStorage implements Storage {
                     String content = rs.getString("content");
                     String uuid = rs.getString("resume_uuid");
                     Resume resume = resumes.get(uuid);
-                    SectionType sectionType = SectionType.valueOf(rs.getString("type"));
-                    if (content != null) {
-                        switch (sectionType) {
-                            case PERSONAL:
-                            case OBJECTIVE: {
-                                resume.addSection(sectionType, new TextSection(sectionType, content));
-                                break;
-                            }
-                            case ACHIEVEMENT:
-                            case QUALIFICATIONS: {
-                                TextListSection listSection = new TextListSection();
-                                List<String> listOfContent = Arrays.asList(content.split("\n"));
-                                resume.addSection(sectionType, new TextListSection(sectionType, listOfContent));
-                                break;
-                            }
-                            case EXPERIENCE:
-                            case EDUCATION: {
-                                break;
-                            }
-                        }
-                    }
+                    makeSection(resume, rs, content);
                 }
             }
             return new ArrayList<>(resumes.values());
@@ -223,6 +186,29 @@ public class SqlStorage implements Storage {
                 ps.addBatch();
             }
             ps.executeBatch();
+        }
+    }
+
+    private void makeSection(Resume resume, ResultSet rs, String content) throws SQLException {
+        SectionType sectionType = SectionType.valueOf(rs.getString("type"));
+        if (content != null) {
+            switch (sectionType) {
+                case PERSONAL:
+                case OBJECTIVE: {
+                    resume.addSection(sectionType, new TextSection(sectionType, content));
+                    break;
+                }
+                case ACHIEVEMENT:
+                case QUALIFICATIONS: {
+                    List<String> listOfContent = Arrays.asList(content.split("\n"));
+                    resume.addSection(sectionType, new TextListSection(sectionType, listOfContent));
+                    break;
+                }
+                case EXPERIENCE:
+                case EDUCATION: {
+                    break;
+                }
+            }
         }
     }
 }

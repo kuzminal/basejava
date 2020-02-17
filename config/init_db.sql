@@ -15,7 +15,7 @@ create table contact
             primary key,
     type text not null,
     value text not null,
-    resume_uuid char(36) not null
+    resume_uuid varchar(36) not null
         constraint contact_resume_uuid_fk
             references resume
             on update restrict on delete cascade
