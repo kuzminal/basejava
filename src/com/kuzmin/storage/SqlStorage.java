@@ -193,7 +193,7 @@ public class SqlStorage implements Storage {
             }
             ps.executeBatch();
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            throw new StorageException(e);
         }
     }
 
@@ -209,7 +209,6 @@ public class SqlStorage implements Storage {
                 }
                 case ACHIEVEMENT:
                 case QUALIFICATIONS: {
-                   // List<String> listOfContent = Arrays.asList(content.split("\n"));
                     TextListSection textSection = JSONParser.read(content, TextListSection.class);
                     resume.addSection(sectionType, textSection);
                     break;
