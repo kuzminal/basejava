@@ -16,6 +16,7 @@
 </head>
 <body>
 <section>
+    <%@ include file="fragments/header.jsp"%>
     <table border="1" cellpadding="8" cellspacing="0">
         <tr class="tab_head">
             <th>Имя</th>
@@ -34,6 +35,7 @@
             }
         %>
     </table>
+    <%@ include file="fragments/footer.jsp"%>
 </section>
 </body>
 </html>
