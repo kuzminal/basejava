@@ -1,0 +1,8 @@
+table {
+    border: 1px black;
+    padding: 8px;
+}
+
+.tab_head {
+    background-color: darkgrey;
+}
