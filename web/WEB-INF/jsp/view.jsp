@@ -18,12 +18,18 @@
 <%@ include file="fragments/header.jsp" %>
 <section>
     <h2>${resume.fullName}&nbsp;<a href="resume?uuid=${resume.uuid}&action=edit">Edit</a></h2>
+    <h3>Контакты</h3>
     <p>
         <c:forEach var="contactEntry" items="${resume.contacts}">
             <jsp:useBean id="contactEntry" type="java.util.Map.Entry<com.kuzmin.model.ContactType, java.lang.String>"/>
             <%=contactEntry.getKey().toHTML(contactEntry.getValue())%><br/>
         </c:forEach>
     </p>
+    <c:forEach var="sectionEntry" items="${resume.sections}">
+        <jsp:useBean id="sectionEntry" type="java.util.Map.Entry<com.kuzmin.model.SectionType, com.kuzmin.model.AbstractSection>"/>
+        <h3><%=sectionEntry.getKey().getTitle()%></h3>
+        <%=sectionEntry.getValue()%><br/>
+    </c:forEach>
 </section>
 <%@ include file="fragments/footer.jsp" %>
 </body>
