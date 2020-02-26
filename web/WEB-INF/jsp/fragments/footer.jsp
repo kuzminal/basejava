@@ -7,5 +7,5 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <footer>
-    @2020 год
+    Aleksey Kuzmin @ 2020
 </footer>
