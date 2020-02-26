@@ -1,3 +1,7 @@
+<%@ page import="com.kuzmin.model.TextListSection" %>
+<%@ page import="com.kuzmin.model.SectionType" %>
+<%@ page import="com.kuzmin.model.Experience" %>
+<%@ page import="com.kuzmin.model.OrganizationSection" %>
 <%--
   Created by IntelliJ IDEA.
   User: aleksejkuzmin
@@ -26,9 +30,25 @@
         </c:forEach>
     </p>
     <c:forEach var="sectionEntry" items="${resume.sections}">
-        <jsp:useBean id="sectionEntry" type="java.util.Map.Entry<com.kuzmin.model.SectionType, com.kuzmin.model.AbstractSection>"/>
-        <h3><%=sectionEntry.getKey().getTitle()%></h3>
-        <%=sectionEntry.getValue()%><br/>
+        <jsp:useBean id="sectionEntry"
+                     type="java.util.Map.Entry<com.kuzmin.model.SectionType, com.kuzmin.model.AbstractSection>"/>
+        <c:choose>
+            <c:when test="${sectionEntry.key == 'ACHIEVEMENT' || sectionEntry.key == 'QUALIFICATIONS'}">
+                <h3><%=sectionEntry.getKey().getTitle()%>
+                </h3>
+                <%=((TextListSection) sectionEntry.getValue()).toHTML()%>
+            </c:when>
+            <c:when test="${sectionEntry.key == 'EXPERIENCE' || sectionEntry.key == 'EDUCATION'}">
+                <h3><%=sectionEntry.getKey().getTitle()%>
+                </h3>
+                <%=((OrganizationSection) sectionEntry.getValue()).toHTML()%>
+            </c:when>
+            <c:otherwise>
+                <h3><%=sectionEntry.getKey().getTitle()%>
+                </h3>
+                <%=sectionEntry.getValue()%><br/>
+            </c:otherwise>
+        </c:choose>
     </c:forEach>
 </section>
 <%@ include file="fragments/footer.jsp" %>

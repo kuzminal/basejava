@@ -2,6 +2,7 @@ package com.kuzmin;
 
 import com.kuzmin.model.*;
 
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +41,7 @@ public class ResumeTestData {
         qualifications.add("DB: PostgreSQL(наследование, pgplsql, PL/Python), Redis (Jedis), H2, Oracle,");
         AbstractSection qualification = new TextListSection(SectionType.QUALIFICATIONS, qualifications);
         sections.put(SectionType.QUALIFICATIONS, qualification);
-        /*List<Experience> experiencesJavaOnline = new ArrayList<>();
+        List<Experience> experiencesJavaOnline = new ArrayList<>();
         List<Organization> organizations = new ArrayList<>();
         Experience author = new Experience(YearMonth.parse("2013-10"), YearMonth.now(), "Создание, организация и проведение Java онлайн проектов и стажировок.", "Автор проекта");
         experiencesJavaOnline.add(author);
@@ -68,7 +69,7 @@ public class ResumeTestData {
         Organization mptu = new Organization("Заочная физико-техническая школа при МФТИ", "http://mspu.ru", educationMPTU);
         educations.add(mptu);
         OrganizationSection education = new OrganizationSection(SectionType.EDUCATION, educations);
-        sections.put(SectionType.EDUCATION, education);*/
+        sections.put(SectionType.EDUCATION, education);
 
         resume.setSections(sections);
         return resume;

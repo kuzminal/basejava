@@ -215,6 +215,8 @@ public class SqlStorage implements Storage {
                 }
                 case EXPERIENCE:
                 case EDUCATION: {
+                    OrganizationSection organizationSection = JSONParser.read(content, OrganizationSection.class);
+                    resume.addSection(sectionType, organizationSection);
                     break;
                 }
             }

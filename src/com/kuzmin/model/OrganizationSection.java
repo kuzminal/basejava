@@ -44,4 +44,12 @@ public class OrganizationSection extends AbstractSection {
         }
         return organizationsInformation.toString();
     }
+
+    public String toHTML() {
+        StringBuilder organizationsInformation = new StringBuilder();
+        for (Organization organization : organizations){
+            organizationsInformation.append(organization.toHTML());
+        }
+        return organizationsInformation.toString();
+    }
 }

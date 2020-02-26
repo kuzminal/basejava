@@ -44,4 +44,12 @@ public class TextListSection extends AbstractSection {
         }
         return information.toString();
     }
+
+    public String toHTML() {
+        StringBuilder information = new StringBuilder();
+        for (String sectionInformation : textInformation) {
+            information.append("</p>").append(sectionInformation).append("</p>");
+        }
+        return information.toString();
+    }
 }

@@ -72,4 +72,14 @@ public class Organization implements Serializable {
         }
         return result.toString();
     }
+
+    public String toHTML() {
+        StringBuilder result = new StringBuilder();
+        result.append("<h4>").append(title).append("</h4>");
+        result.append("<h4>").append(url).append("</h4>");
+        for (Experience experience : experiences){
+            result.append("<p>").append(experience).append("</p>");
+        }
+        return result.toString();
+    }
 }
