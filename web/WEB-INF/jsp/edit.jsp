@@ -1,5 +1,4 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%--
+<%@ page import="com.kuzmin.model.ContactType" %><%--
   Created by IntelliJ IDEA.
   User: aleksejkuzmin
   Date: 26.02.2020
@@ -18,13 +17,25 @@
 <body>
 <%@ include file="fragments/header.jsp" %>
 <section>
-    <h2>${resume.fullName}&nbsp;<a href="resume?uuid=${resume.uuid}&action=edit">Edit</a></h2>
-    <p>
-        <c:forEach var="contactEntry" items="${resume.contacts}">
-            <jsp:useBean id="contactEntry" type="java.util.Map.Entry<com.kuzmin.model.ContactType, java.lang.String>"/>
-            <%=contactEntry.getKey().toHTML(contactEntry.getValue())%>
-        </c:forEach>
-    </p>
+    <form method="post" action="resume" enctype="application/x-www-form-urlencoded">
+        <input type="hidden" name="uuid" value="${resume.uuid}">
+        <dl>
+            <dt>Имя:</dt>
+            <dd><input type="text" name="fullName" size="50" value="${resume.fullName}"></dd>
+        </dl>
+        <h3>Контакты</h3>
+        <p>
+            <c:forEach var="type" items="<%=ContactType.values()%>">
+                <dl>
+                    <dt>${type.title}</dt>
+                    <dd><input type="text" name="${type.name()}" size="30" value="${resume.getContact(type)}"></dd>
+                </dl>
+            </c:forEach>
+        </p>
+        <br>
+        <button type="submit">Сохранить</button>
+        <button onclick="window.history.back()">Отменить</button>
+    </form>
 </section>
 <%@ include file="fragments/footer.jsp" %>
 </body>

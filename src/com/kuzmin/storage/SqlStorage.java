@@ -116,7 +116,7 @@ public class SqlStorage implements Storage {
         Map<String, Resume> resumes = new LinkedHashMap<>();
         return sqlHelper.executeTransactional(connection -> {
             try (PreparedStatement ps = connection.prepareStatement("SELECT * FROM resume r " +
-                    " ORDER BY uuid")) {
+                    " ORDER BY full_name")) {
                 ResultSet rs = ps.executeQuery();
                 while (rs.next()) {
                     Resume resume = new Resume(rs.getString("uuid"), rs.getString("full_name"));
