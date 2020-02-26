@@ -1,11 +1,19 @@
 table {
-    border: 1px black;
-    padding: 8px;
+    border: 2px double black;
+    border-collapse: collapse;
 }
 
-.tab_head {
-    background-color: darkgrey;
+th {
+    text-align: left; /* Выравнивание по левому краю */
+    background: #ccc; /* Цвет фона ячеек */
+    padding: 5px; /* Поля вокруг содержимого ячеек */
+    border: 1px solid black; /* Граница вокруг ячеек */
 }
+td {
+    padding: 5px; /* Поля вокруг содержимого ячеек */
+    border: 1px solid black; /* Граница вокруг ячеек */
+}
+
 
 header {
     background: none repeat scroll 0 0 #A6C9E2;
@@ -20,5 +28,5 @@ footer {
     font-size: 20px;
     padding: 5px 20px;
     margin: 20px 0;
-    text-align: center;
+    text-align: left;
 }
