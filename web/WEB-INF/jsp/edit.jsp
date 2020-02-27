@@ -1,7 +1,6 @@
 <%@ page import="com.kuzmin.model.ContactType" %>
-<%@ page import="com.kuzmin.model.SectionType" %>
 <%@ page import="com.kuzmin.model.OrganizationSection" %>
-<%@ page import="com.kuzmin.model.TextListSection" %>
+<%@ page import="com.kuzmin.model.SectionType" %>
 <%@ page import="java.time.YearMonth" %><%--
   Created by IntelliJ IDEA.
   User: aleksejkuzmin
@@ -44,18 +43,23 @@
                         <dl>
                             <dt>${section.title}</dt>
                             <dd>
-                                <c:forEach var="organization" items="<%=((OrganizationSection)resume.getSection(SectionType.EXPERIENCE)).getOrganizations()%>">
-                                    <jsp:useBean id="organization" type="com.kuzmin.model.Organization"/>
-                                    <input type="text" name="title" size="50" value="${organization.title}"></br>
-                                    <input type="text" name="url" size="30" value="${organization.url}"></br>
-                                    <c:forEach var="exp" items="${organization.experiences}">
-                                        <jsp:useBean id="exp" type="com.kuzmin.model.Experience"/>
-                                        <input type="text" name="startDate" size="10" value="${exp.startDate}"></br>
-                                        <input type="text" name="endDate" size="10" value="<%=exp.getEndDate().equals(YearMonth.now()) ? "по наст. врем" : exp.getEndDate()%>"></br>
-                                        <input type="text" name="position" size="30" value="${exp.position}"></br>
-                                        <textarea rows="5" cols="40">${exp.description}</textarea></br>
+                                <c:if test="<%=(resume.getSection(SectionType.EXPERIENCE)) != null %>">
+                                    <c:forEach var="organization" varStatus="index" items="<%=((OrganizationSection)resume.getSection(SectionType.EXPERIENCE)).getOrganizations()%>">
+                                        <jsp:useBean id="organization" type="com.kuzmin.model.Organization"/>
+                                        <input type="hidden" name="${section}" value="true">
+                                        <label> Учереждение: <input type="text" name="${section}description" size="50" value="${organization.title}"> </label></br>
+                                        <label> URL: <input type="text" name="${section}url" size="30" value="${organization.url}"> </label></br>
+                                        <c:if test="${organization.experiences != null}">
+                                            <c:forEach var="experiences" items="${organization.experiences}">
+                                                <jsp:useBean id="experiences" type="com.kuzmin.model.Experience"/>
+                                                <label> Дата начала:<input type="text" name="${section}${index.index}startDate" size="10" value="${experiences.startDate}" placeholder="2019-10" pattern="\d{4}\-\d{2}"></label></br>
+                                                <label> Финальная дата: <input type="text" name="${section}${index.index}endDate" size="10" placeholder="2019-10" value="${experiences.endDate}" pattern="\d{4}\-\d{2}"></label></br>
+                                                <label> Позиция:  <input type="text" name="${section}${index.index}position" size="30" value="${experiences.position}"></label></br>
+                                                <label> Описание: <textarea rows="5" cols="40" name="${section}${index.index}dscr">${experiences.description}</textarea></label></br>
+                                            </c:forEach>
+                                        </c:if>
                                     </c:forEach>
-                                </c:forEach>
+                                </c:if>
                             </dd>
                         </dl>
                     </c:when>
@@ -63,25 +67,30 @@
                         <dl>
                             <dt>${section.title}</dt>
                             <dd>
-                                <c:forEach var="education" items="<%=((OrganizationSection)resume.getSection(SectionType.EDUCATION)).getOrganizations()%>">
-                                    <jsp:useBean id="education" type="com.kuzmin.model.Organization"/>
-                                    <input type="text" name="title" size="50" value="${education.title}"></br>
-                                    <input type="text" name="url" size="30" value="${education.url}"></br>
-                                    <c:forEach var="expr" items="${education.experiences}">
-                                        <jsp:useBean id="expr" type="com.kuzmin.model.Experience"/>
-                                        <input type="text" name="startDate" size="10" value="${expr.startDate}"></br>
-                                        <input type="text" name="endDate" size="10" value="<%=expr.getEndDate().equals(YearMonth.now()) ? "по наст. врем" : expr.getEndDate()%>"></br>
-                                        <input type="text" name="position" size="30" value="${expr.position}"></br>
-                                        <textarea rows="5" cols="40">${expr.description}</textarea></br>
+                                <c:if test="<%=(resume.getSection(SectionType.EDUCATION)) != null %>">
+                                    <c:forEach var="education" varStatus="index" items="<%=((OrganizationSection)resume.getSection(SectionType.EDUCATION)).getOrganizations()%>">
+                                        <jsp:useBean id="education" type="com.kuzmin.model.Organization"/>
+                                        <input type="hidden" name="${section}" value="true">
+                                        <label> Учереждение: <input type="text" name="${section}description" size="50" value="${education.title}"> </label></br>
+                                        <label> URL: <input type="text" name="${section}url" size="30" value="${education.url}"> </label></br>
+                                        <c:if test="${education.experiences != null}">
+                                            <c:forEach var="expr" items="${education.experiences}">
+                                                <jsp:useBean id="expr" type="com.kuzmin.model.Experience"/>
+                                                <label> Дата начала: <input type="text" name="${section}${index.index}startDate" size="10" value="${expr.startDate}" placeholder="2019-10" pattern="\d{4}\-\d{2}"></label></br>
+                                                <label> Финальная дата: <input type="text" name="${section}${index.index}endDate" size="10" placeholder="2019-10" value="${expr.endDate}" pattern="\d{4}\-\d{2}"></label></br>
+                                                <label> Квалификация\степень: <input type="text" name="${section}${index.index}position" size="30" value="${expr.position}"></label></br>
+                                                <label> Описание:  <textarea rows="5" cols="40" name="${section}${index.index}dscr">${expr.description}</textarea></label></br>
+                                            </c:forEach>
+                                        </c:if>
                                     </c:forEach>
-                                </c:forEach>
+                                </c:if>
                             </dd>
                         </dl>
                     </c:when>
                     <c:otherwise>
                         <dl>
                             <dt>${section.title}</dt>
-                            <dd><textarea rows="10" cols="40">${resume.getSection(section)}</textarea></dd>
+                            <dd><textarea rows="10" cols="40" name="${section.name()}">${resume.getSection(section)}</textarea></dd>
                         </dl>
                     </c:otherwise>
                 </c:choose>
