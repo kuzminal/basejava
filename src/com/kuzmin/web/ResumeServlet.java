@@ -15,6 +15,7 @@ import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class ResumeServlet extends HttpServlet {
     private Storage storage;
@@ -29,15 +30,28 @@ public class ResumeServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         String uuid = request.getParameter("uuid");
         String fullName = request.getParameter("fullName");
+        String postAction = request.getParameter("postAction");
         Resume resume;
-        try {
-            resume = storage.get(uuid);
-            resume.setFullName(fullName);
-            fillContacts(request, resume);
-            fillSections(request, resume);
-            storage.update(resume);
-        } catch (NotExistStorageException e) {
-            resume = new Resume(uuid, fullName);
+        if (uuid != null) {
+            switch (postAction) {
+                case "saveContact":
+                    resume = storage.get(uuid);
+                    saveContact(request, resume);
+                    storage.update(resume);
+                    response.sendRedirect("resume?uuid="+ resume.getUuid() + "&action=edit");
+                    return;
+                case "saveResume":
+                    resume = storage.get(uuid);
+                    resume.setFullName(fullName);
+                    fillContacts(request, resume);
+                    fillSections(request, resume);
+                    storage.update(resume);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Action " + postAction + " is illegal");
+            }
+        } else {
+            resume = new Resume(fullName);
             fillContacts(request, resume);
             fillSections(request, resume);
             storage.save(resume);
@@ -48,29 +62,50 @@ public class ResumeServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String uuid = request.getParameter("uuid");
         String action = request.getParameter("action");
+        String url;
         if (action == null) {
             request.setAttribute("resumes", storage.getAllSorted());
             request.getRequestDispatcher("/WEB-INF/jsp/list.jsp").forward(request, response);
         }
-        Resume resume;
+        Resume resume = null;
         switch (action) {
             case "delete":
                 storage.delete(uuid);
                 response.sendRedirect("resume");
                 return;
+            case "deleteContact":
+                resume = storage.get(uuid);
+                Map<ContactType, String> conntacts =  resume.getContacts();
+                conntacts.remove(ContactType.valueOf(request.getParameter("contact")));
+                resume.setContacts(conntacts);
+                storage.update(resume);
+                response.sendRedirect("resume?uuid="+ resume.getUuid() + "&action=edit");
+                return;
             case "view":
-            case "edit":
+                url = "/WEB-INF/jsp/view.jsp";
                 resume = storage.get(uuid);
                 break;
+            case "edit":
+                resume = storage.get(uuid);
+                url = "/WEB-INF/jsp/edit.jsp";
+                break;
             case "add":
-                resume = new Resume("");
+                resume = new Resume();
+                url = "/WEB-INF/jsp/edit.jsp";
+                break;
+            case "newSection":
+                resume = storage.get(uuid);
+                url = "/WEB-INF/jsp/newSection.jsp";
+                break;
+            case "newContact":
+                resume = storage.get(uuid);
+                url = "/WEB-INF/jsp/newContact.jsp";
                 break;
             default:
                 throw new IllegalArgumentException("Action " + action + " is illegal");
         }
         request.setAttribute("resume", resume);
-        request.getRequestDispatcher(
-                ("view".equals(action) ? "/WEB-INF/jsp/view.jsp" : "/WEB-INF/jsp/edit.jsp")
+        request.getRequestDispatcher((url)
         ).forward(request, response);
     }
 
@@ -132,6 +167,16 @@ public class ResumeServlet extends HttpServlet {
             } else {
                 resume.getSections().remove(type);
             }
+        }
+    }
+
+    private void saveContact(HttpServletRequest request, Resume resume) {
+        String contactType = request.getParameter("contactType");
+        String contactValue = request.getParameter("contactValue");
+        if ((contactType != null && contactType.trim().length() != 0) && (contactValue != null && contactValue.trim().length() != 0)) {
+            resume.addContact(ContactType.valueOf(contactType), contactValue);
+        } else {
+            resume.getContacts().remove(contactType);
         }
     }
 }

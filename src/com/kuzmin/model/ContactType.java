@@ -9,18 +9,23 @@ public enum ContactType {
     EMAIL("e-mail") {
         @Override
         public String toHTML0(String value) {
-            return value == null ? "" : "<a href='mailto:" + value + "'>" + value + "</a>";
+            return value == null ? "" : "<a href='mailto:" + value + "'> <img src=\"img/email.png\"> " + value + "</a>";
         }
     },
     @SerializedName("ICQ")
     ICQ("ICQ"),
     @SerializedName("GIT")
-    GIT("github"),
+    GIT("github") {
+        @Override
+        public String toHTML0(String value) {
+            return value == null ? "" : "<a href='" + value + "'> <img src=\"img/gh.png\"> " + value + "</a>";
+        }
+    },
     @SerializedName("SKYPE")
     SKYPE("Skype") {
         @Override
         public String toHTML0(String value) {
-            return value == null ? "" : "<a href='skype:" + value + "'>" + value + "</a>";
+            return value == null ? "" : "<a href='skype:" + value + "'> <img src=\"img/skype.png\"> " + value + "</a>";
         }
     };
 
@@ -34,7 +39,7 @@ public enum ContactType {
         return title;
     }
 
-    protected String toHTML0 (String value) {
+    protected String toHTML0(String value) {
         return title + " : " + value;
     }
 
