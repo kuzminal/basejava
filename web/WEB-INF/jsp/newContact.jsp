@@ -22,9 +22,9 @@
         <input type="hidden" name="postAction" value="saveContact">
         <dl>
             <dt>Имя:</dt>
-            <dd><input type="text" name="fullName" size="50" value="${resume.fullName}"></dd>
+            <dd>${resume.fullName}</dd>
         </dl>
-        <h3>Контакты</h3>
+        <h3>Добавление контакта</h3>
         <p>
         <dl>
             <dt>

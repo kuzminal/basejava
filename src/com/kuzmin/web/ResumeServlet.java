@@ -29,8 +29,8 @@ public class ResumeServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
         String uuid = request.getParameter("uuid");
-        String fullName = request.getParameter("fullName");
-        String postAction = request.getParameter("postAction");
+        String fullName = request.getParameter("fullName") != null ? request.getParameter("fullName") : "";
+        String postAction = request.getParameter("postAction") != null ? request.getParameter("postAction") : "";
         Resume resume;
         if (uuid != null) {
             switch (postAction) {
@@ -61,7 +61,7 @@ public class ResumeServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String uuid = request.getParameter("uuid");
-        String action = request.getParameter("action");
+        String action = request.getParameter("action") != null ? request.getParameter("action") : "";
         String url;
         if (action == null) {
             request.setAttribute("resumes", storage.getAllSorted());
