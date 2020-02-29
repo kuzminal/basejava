@@ -40,14 +40,16 @@
         <h3>Секции</h3>
         <p>
             <c:forEach var="section" items="<%=SectionType.values()%>">
+                    <c:set var="sec" value="${resume.getSection(section)}"/>
+                    <jsp:useBean id="sec" type="com.kuzmin.model.AbstractSection"/>
                     <c:choose>
-                      <c:when test="${section == 'EXPERIENCE'}">
+                      <c:when test="${section == 'EXPERIENCE' || section == 'EDUCATION'}">
                         <dl>
                             <dt>${section.title}<br><br><a href="resume?uuid=${resume.uuid}&action=newSection">Добавить еще <img src="img/add.png"></a></dt>
                             <dd>
                                 <c:choose>
-                                    <c:when test="<%=(resume.getSection(SectionType.EXPERIENCE)) != null %>">
-                                        <c:forEach var="organization" varStatus="index" items="<%=((OrganizationSection)resume.getSection(SectionType.EXPERIENCE)).getOrganizations()%>">
+                                    <c:when test="<%=sec != null %>">
+                                        <c:forEach var="organization" varStatus="index" items="<%=((OrganizationSection) sec).getOrganizations()%>">
                                             <jsp:useBean id="organization" type="com.kuzmin.model.Organization"/>
                                             <input type="hidden" name="${section}" value="true">
                                             <label> Учереждение: <input type="text" name="${section}description" size="50" value="${organization.title}"> </label></br>
@@ -65,35 +67,6 @@
                                     </c:when>
                                     <c:otherwise>
                                         <a href="resume?uuid=${resume.uuid}&action=newSection">Добавить опыт работы<img src="img/add.png"></a>
-                                    </c:otherwise>
-                                </c:choose>
-                            </dd>
-                        </dl>
-                    </c:when>
-                    <c:when test="${section == 'EDUCATION'}">
-                        <dl>
-                            <dt>${section.title}<br><br><a href="resume?uuid=${resume.uuid}&action=newSection">Добавить еще <img src="img/add.png"></a></dt>
-                            <dd>
-                                <c:choose>
-                                    <c:when test="<%=(resume.getSection(SectionType.EDUCATION)) != null %>">
-                                        <c:forEach var="education" varStatus="index" items="<%=((OrganizationSection)resume.getSection(SectionType.EDUCATION)).getOrganizations()%>">
-                                            <jsp:useBean id="education" type="com.kuzmin.model.Organization"/>
-                                            <input type="hidden" name="${section}" value="true">
-                                            <label> Учереждение: <input type="text" name="${section}description" size="50" value="${education.title}"> </label></br>
-                                            <label> URL: <input type="text" name="${section}url" size="30" value="${education.url}"> </label></br>
-                                            <c:if test="${education.experiences != null}">
-                                                <c:forEach var="expr" items="${education.experiences}">
-                                                    <jsp:useBean id="expr" type="com.kuzmin.model.Experience"/>
-                                                    <label> Дата начала: <input type="text" name="${section}${index.index}startDate" size="10" value="${expr.startDate}" placeholder="2019-10" pattern="\d{4}\-\d{2}"></label></br>
-                                                    <label> Финальная дата: <input type="text" name="${section}${index.index}endDate" size="10" placeholder="2019-10" value="${expr.endDate}" pattern="\d{4}\-\d{2}"></label></br>
-                                                    <label> Квалификация\степень: <input type="text" name="${section}${index.index}position" size="30" value="${expr.position}"></label></br>
-                                                    <label> Описание:  <textarea rows="5" cols="40" name="${section}${index.index}dscr">${expr.description}</textarea></label></br>
-                                                </c:forEach>
-                                            </c:if>
-                                        </c:forEach>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <a href="resume?uuid=${resume.uuid}&sectionType=${section}&action=newSection">Добавить информацию об обучении<img src="img/add.png"></a>
                                     </c:otherwise>
                                 </c:choose>
                             </dd>
