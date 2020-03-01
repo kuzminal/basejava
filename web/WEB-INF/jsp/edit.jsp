@@ -30,56 +30,95 @@
         </dl>
         <h3>Контакты <a href="resume?uuid=${resume.uuid}&action=newContact"><img src="img/add.png"></a></h3>
         <p>
-            <c:forEach var="type" items="<%=resume.getContacts().entrySet().stream().filter(f -> f.getValue() != null).map(k -> k.getKey()).collect(Collectors.toList())%>">
-                <dl>
-                    <dt>${type.title}</dt>
-                    <dd><input type="text" name="${type.name()}" size="30" value="${resume.getContact(type)}"> <a href="resume?uuid=${resume.uuid}&contact=${type}&action=deleteContact"><img src="img/delete.png"></a></dd>
-                </dl>
-            </c:forEach>
+            <c:forEach var="type"
+                       items="<%=resume.getContacts().entrySet().stream().filter(f -> f.getValue() != null).map(k -> k.getKey()).collect(Collectors.toList())%>">
+        <dl>
+            <dt>${type.title}</dt>
+            <dd><input type="text" name="${type.name()}" size="30" value="${resume.getContact(type)}"> <a
+                    href="resume?uuid=${resume.uuid}&contact=${type}&action=deleteContact"><img
+                    src="img/delete.png"></a></dd>
+        </dl>
+        </c:forEach>
         </p>
-        <h3>Секции</h3>
+        <h3>Секции <a href="resume?uuid=${resume.uuid}&action=addSection"><img src="img/add.png"></a></h3>
         <p>
-            <c:forEach var="section" items="<%=SectionType.values()%>">
-                    <c:set var="sec" value="${resume.getSection(section)}"/>
-                    <jsp:useBean id="sec" type="com.kuzmin.model.AbstractSection"/>
-                    <c:choose>
-                      <c:when test="${section == 'EXPERIENCE' || section == 'EDUCATION'}">
-                        <dl>
-                            <dt>${section.title}<br><br><a href="resume?uuid=${resume.uuid}&action=newSection">Добавить еще <img src="img/add.png"></a></dt>
-                            <dd>
-                                <c:choose>
-                                    <c:when test="<%=sec != null %>">
-                                        <c:forEach var="organization" varStatus="index" items="<%=((OrganizationSection) sec).getOrganizations()%>">
-                                            <jsp:useBean id="organization" type="com.kuzmin.model.Organization"/>
-                                            <input type="hidden" name="${section}" value="true">
-                                            <label> Учереждение: <input type="text" name="${section}description" size="50" value="${organization.title}"> </label></br>
-                                            <label> URL: <input type="text" name="${section}url" size="30" value="${organization.url}"> </label></br>
-                                            <c:if test="${organization.experiences != null}">
-                                                <c:forEach var="experiences" items="${organization.experiences}">
-                                                    <jsp:useBean id="experiences" type="com.kuzmin.model.Experience"/>
-                                                    <label> Дата начала:<input type="text" name="${section}${index.index}startDate" size="10" value="${experiences.startDate}" placeholder="2019-10" pattern="\d{4}\-\d{2}"></label></br>
-                                                    <label> Финальная дата: <input type="text" name="${section}${index.index}endDate" size="10" placeholder="2019-10" value="${experiences.endDate}" pattern="\d{4}\-\d{2}"></label></br>
-                                                    <label> Позиция:  <input type="text" name="${section}${index.index}position" size="30" value="${experiences.position}"></label></br>
-                                                    <label> Описание: <textarea rows="5" cols="40" name="${section}${index.index}dscr">${experiences.description}</textarea></label></br>
-                                                </c:forEach>
-                                            </c:if>
-                                        </c:forEach>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <a href="resume?uuid=${resume.uuid}&action=newSection">Добавить опыт работы<img src="img/add.png"></a>
-                                    </c:otherwise>
-                                </c:choose>
-                            </dd>
-                        </dl>
+            <c:forEach var="section"
+                       items="<%=resume.getSections().entrySet().stream().filter(f -> f.getValue() != null).map(k -> k.getKey()).collect(Collectors.toList())%>">
+                <c:set var="sec" value="${resume.getSection(section)}"/>
+                <jsp:useBean id="sec" type="com.kuzmin.model.AbstractSection"/>
+            <c:choose>
+            <c:when test="${section == 'EXPERIENCE' || section == 'EDUCATION'}">
+        <dl>
+            <dt>${section.title}<br><br><a href="resume?uuid=${resume.uuid}&section=${section}&action=newSection">Добавить детали<img src="img/add.png"></a></dt>
+            <dd>
+                <c:choose>
+                    <c:when test="<%=sec != null%>">
+                        <c:forEach var="organization" varStatus="index"
+                                   items="<%=((OrganizationSection) sec).getOrganizations()%>">
+                            <jsp:useBean id="organization" type="com.kuzmin.model.Organization"/>
+                            <input type="hidden" name="${section}" value="true">
+                            <label> Учереждение: <input type="text" name="${section}description" size="50"
+                                                        value="${organization.title}"> </label></br>
+                            <label> URL: <input type="text" name="${section}url" size="30" value="${organization.url}">
+                            </label></br>
+                            <c:choose>
+                                <c:when test="${organization.experiences != null}">
+                                    <c:forEach var="experiences" items="${organization.experiences}">
+                                        <jsp:useBean id="experiences" type="com.kuzmin.model.Experience"/>
+                                        <label> Дата начала:<input type="text" name="${section}${index.index}startDate"
+                                                                   size="10" value="${experiences.startDate}"
+                                                                   placeholder="2019-10" pattern="\d{4}\-\d{2}"></label></br>
+                                        <label> Финальная дата: <input type="text"
+                                                                       name="${section}${index.index}endDate"
+                                                                       size="10" placeholder="2019-10"
+                                                                       value="${experiences.endDate}"
+                                                                       pattern="\d{4}\-\d{2}"></label></br>
+                                        <label> Позиция: <input type="text" name="${section}${index.index}position"
+                                                                size="30" value="${experiences.position}"></label></br>
+                                        <label> Описание: <textarea rows="5" cols="40"
+                                                                    name="${section}${index.index}dscr">${experiences.description}</textarea></label></br>
+                                        <a href="resume?uuid=${resume.uuid}&section=${section}&organisation=${organization.title}&action=addPosition"><img
+                                                src="img/add.png">Добавить еще</a></br>
+
+                                    </c:forEach>
+                                </c:when>
+                                <c:otherwise>
+                                    <a href="resume?uuid=${resume.uuid}&section=${section}&organisation=${organization.title}&action=newExp">Добавить еще
+                                        <img src="img/add.png"></a>
+                                </c:otherwise>
+                            </c:choose>
+                        </c:forEach>
                     </c:when>
                     <c:otherwise>
-                        <dl>
-                            <dt>${section.title}</dt>
-                            <dd><textarea rows="10" cols="40" name="${section.name()}">${resume.getSection(section)}</textarea></dd>
-                        </dl>
+                        <a href="resume?uuid=${resume.uuid}&section=${section}&action=newSection">Добавить <img src="img/add.png"></a>
                     </c:otherwise>
                 </c:choose>
-            </c:forEach>
+            </dd>
+            <dd><a href="resume?uuid=${resume.uuid}&section=${section}&action=deleteSection"><img
+                src="img/delete.png"></a></dd>
+        </dl>
+        </c:when>
+        <c:otherwise>
+            <dl>
+                <dt>${section.title}</dt>
+                <dd>
+                    <c:choose>
+                        <c:when test="<%=sec.toString() != null %>">
+                            <textarea rows="10" cols="40"
+                                      name="${section.name()}">${resume.getSection(section)}</textarea>
+                        </c:when>
+                        <c:otherwise>
+                            <textarea rows="10" cols="40"
+                                      name="${section.name()}"></textarea>
+                        </c:otherwise>
+                    </c:choose>
+                </dd>
+                <dd><a href="resume?uuid=${resume.uuid}&section=${section}&action=deleteSection"><img
+                        src="img/delete.png"></a></dd>
+            </dl>
+        </c:otherwise>
+        </c:choose>
+        </c:forEach>
         </p>
         <br>
         <button type="submit">Сохранить</button>
