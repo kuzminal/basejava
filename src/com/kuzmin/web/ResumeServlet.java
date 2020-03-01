@@ -91,6 +91,7 @@ public class ResumeServlet extends HttpServlet {
         SectionType sectionType = null;
         OrganizationSection orgSect = null;
         Organization org = null;
+        Experience exp = null;
         switch (action) {
             case "delete":
                 storage.delete(uuid);
@@ -109,6 +110,43 @@ public class ResumeServlet extends HttpServlet {
                 Map<SectionType, AbstractSection> sections = resume.getSections();
                 sections.remove(SectionType.valueOf(request.getParameter("section")));
                 resume.setSections(sections);
+                storage.update(resume);
+                response.sendRedirect("resume?uuid=" + resume.getUuid() + "&action=edit");
+                return;
+            case "deleteOrganisation":
+                resume = storage.get(uuid);
+                orgSect = (OrganizationSection) resume.getSection(SectionType.valueOf(request.getParameter("section")));
+                for (Organization organization : orgSect.getOrganizations()) {
+                    if (organization.getTitle().equals(request.getParameter("organisation"))) {
+                        org = organization;
+                    }
+                }
+                if (org != null) {
+                    orgSect.getOrganizations().remove(org);
+                }
+                storage.update(resume);
+                response.sendRedirect("resume?uuid=" + resume.getUuid() + "&action=edit");
+                return;
+            case "deleteExperience":
+                resume = storage.get(uuid);
+                orgSect = (OrganizationSection) resume.getSection(SectionType.valueOf(request.getParameter("section")));
+                for (Organization organization : orgSect.getOrganizations()) {
+                    if (organization.getTitle().equals(request.getParameter("organisation"))) {
+                        org = organization;
+                    }
+                }
+                if (org != null) {
+                    for (Experience experience : org.getExperiences()) {
+                        if (experience.getStartDate().equals(YearMonth.parse(request.getParameter("expstart")))
+                                && experience.getEndDate().equals(YearMonth.parse(request.getParameter("expend")))
+                                && experience.getPosition().equals(request.getParameter("position"))) {
+                            exp = experience;
+                        }
+                    }
+                    if (exp != null) {
+                        org.getExperiences().remove(exp);
+                    }
+                }
                 storage.update(resume);
                 response.sendRedirect("resume?uuid=" + resume.getUuid() + "&action=edit");
                 return;
@@ -260,7 +298,7 @@ public class ResumeServlet extends HttpServlet {
         String endDate = request.getParameter("endDate");
         String position = request.getParameter("position");
         String desc = request.getParameter("dscr");
-        if ((url != null && url.trim().length() != 0) && (description != null && description.trim().length() != 0)){
+        if ((url != null && url.trim().length() != 0) && (description != null && description.trim().length() != 0)) {
             Organization organization = new Organization();
             organization.setTitle(description);
             organization.setUrl(url);
@@ -287,7 +325,7 @@ public class ResumeServlet extends HttpServlet {
         String position = request.getParameter("position");
         String desc = request.getParameter("dscr");
         Organization organization = null;
-        if (org != null && org.trim().length() != 0){
+        if (org != null && org.trim().length() != 0) {
             OrganizationSection orgSec = (OrganizationSection) resume.getSection(SectionType.valueOf(sectionType));
             for (Organization orgatniz : orgSec.getOrganizations()) {
                 if (orgatniz.getTitle().equals(org)) {
