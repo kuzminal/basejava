@@ -13,7 +13,7 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public class Config {
-    protected static final Path PROPS = Paths.get(getHomeDir() + "/config/resumes.properties");
+    protected static final Path PROPS = Paths.get("D:\\Development\\Java\\basejava\\config\\resumes.properties");
     private static final Config INSTANCE = new Config();
     private Properties props = new Properties();
     private String storageDir;

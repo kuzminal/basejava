@@ -51,7 +51,7 @@
             <c:when test="${section == 'EXPERIENCE' || section == 'EDUCATION'}">
 
         <dl>
-            <dt>${section.title} <a href="resume?uuid=${resume.uuid}&section=${section}&action=deleteSection"><img
+            <dt>${section.title} <a href="resume?uuid=${resume.uuid}&sectionType=${section}&action=deleteSection"><img
                     src="img/delete.png"></a><br><br>
             </dt>
             <dd>
@@ -168,7 +168,7 @@
                         </c:otherwise>
                     </c:choose>
                 </dd>
-                <dd><a href="resume?uuid=${resume.uuid}&section=${section}&action=deleteSection"><img
+                <dd><a href="resume?uuid=${resume.uuid}&sectionType=${section}&action=deleteSection"><img
                         src="img/delete.png"></a></dd>
             </dl>
         </c:otherwise>
