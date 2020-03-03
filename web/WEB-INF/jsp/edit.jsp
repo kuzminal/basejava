@@ -2,7 +2,8 @@
 <%@ page import="com.kuzmin.model.OrganizationSection" %>
 <%@ page import="com.kuzmin.model.SectionType" %>
 <%@ page import="java.time.YearMonth" %>
-<%@ page import="java.util.stream.Collectors" %><%--
+<%@ page import="java.util.stream.Collectors" %>
+<%@ page import="java.util.Map" %><%--
   Created by IntelliJ IDEA.
   User: aleksejkuzmin
   Date: 26.02.2020
@@ -31,7 +32,7 @@
         <h3>Контакты <a href="resume?uuid=${resume.uuid}&action=newContact"><img src="img/add.png"></a></h3>
         <p>
             <c:forEach var="type"
-                       items="<%=resume.getContacts().entrySet().stream().filter(f -> f.getValue() != null).map(k -> k.getKey()).collect(Collectors.toList())%>">
+                       items="<%=resume.getContacts().entrySet().stream().filter(f -> f.getValue() != null).map(Map.Entry::getKey).collect(Collectors.toList())%>">
         <dl>
             <dt>${type.title}</dt>
             <dd><input type="text" name="${type.name()}" size="30" value="${resume.getContact(type)}"> <a
@@ -43,7 +44,7 @@
         <h3>Секции <a href="resume?uuid=${resume.uuid}&action=addSection"><img src="img/add.png"></a></h3>
         <p>
             <c:forEach var="section"
-                       items="<%=resume.getSections().entrySet().stream().filter(f -> f.getValue() != null).map(k -> k.getKey()).collect(Collectors.toList())%>">
+                       items="<%=resume.getSections().entrySet().stream().filter(f -> f.getValue() != null).map(Map.Entry::getKey).collect(Collectors.toList())%>">
                 <c:set var="sec" value="${resume.getSection(section)}"/>
                 <jsp:useBean id="sec" type="com.kuzmin.model.AbstractSection"/>
             <c:choose>
@@ -56,7 +57,7 @@
             <dd>
                 <c:if test="<%=sec != null%>">
                     <c:choose>
-                        <c:when test="<%=((OrganizationSection) sec).getOrganizations() != null%>">
+                        <c:when test="<%=((OrganizationSection) sec).getOrganizations() != null && ((OrganizationSection) sec).getOrganizations().size() > 0%>">
                             <c:forEach var="organization" varStatus="index"
                                        items="<%=((OrganizationSection) sec).getOrganizations()%>">
                                 <jsp:useBean id="organization" type="com.kuzmin.model.Organization"/>
@@ -66,7 +67,7 @@
                                     <dd><input type="text" name="${section}description" size="50"
                                                value="${organization.title}"></dd>
                                     <dd>
-                                        <a href="resume?uuid=${resume.uuid}&section=${section}&organisation=${organization.title}&action=deleteOrganisation"><img
+                                        <a href="resume?uuid=${resume.uuid}&sectionType=${section}&organisation=${organization.title}&action=deleteOrganisation"><img
                                                 src="img/delete.png"></a></dd>
                                 </dl>
                                 <dl>
@@ -85,7 +86,7 @@
                                                            size="10" value="${experiences.startDate}"
                                                            placeholder="2019-10" pattern="\d{4}\-\d{2}"></dd>
                                                 <dd>
-                                                    <a href="resume?uuid=${resume.uuid}&section=${section}&organisation=${organization.title}&expstart=${experiences.startDate}&expend=${experiences.endDate}&position=${experiences.position}&action=deleteExperience"><img
+                                                    <a href="resume?uuid=${resume.uuid}&sectionType=${section}&organisation=${organization.title}&expstart=${experiences.startDate}&expend=${experiences.endDate}&position=${experiences.position}&action=deleteExperience"><img
                                                             src="img/delete.png"></a></dd>
                                             </dl>
                                             <dl>
@@ -111,22 +112,22 @@
                                         </c:forEach>
                                         <c:choose>
                                             <c:when test="${section == 'EXPERIENCE'}">
-                                                <a href="resume?uuid=${resume.uuid}&section=${section}&organisation=${organization.title}&action=addPosition"><img
+                                                <a href="resume?uuid=${resume.uuid}&sectionType=${section}&organisation=${organization.title}&action=addPosition"><img
                                                         src="img/add.png">Добавить еще опыт</a><br>
                                             </c:when>
                                             <c:when test="${section == 'EDUCATION'}">
-                                                <a href="resume?uuid=${resume.uuid}&section=${section}&organisation=${organization.title}&action=addPosition"><img
+                                                <a href="resume?uuid=${resume.uuid}&sectionType=${section}&organisation=${organization.title}&action=addPosition"><img
                                                         src="img/add.png">Добавить период обучения</a><br>
                                             </c:when>
                                         </c:choose>
                                     </c:when>
                                     <c:otherwise>
                                         <c:when test="${section == 'EXPERIENCE'}">
-                                            <a href="resume?uuid=${resume.uuid}&section=${section}&organisation=${organization.title}&action=addPosition"><img
+                                            <a href="resume?uuid=${resume.uuid}&sectionType=${section}&organisation=${organization.title}&action=addPosition"><img
                                                     src="img/add.png">Добавить еще опыт</a><br>
                                         </c:when>
                                         <c:when test="${section == 'EDUCATION'}">
-                                            <a href="resume?uuid=${resume.uuid}&section=${section}&organisation=${organization.title}&action=addPosition"><img
+                                            <a href="resume?uuid=${resume.uuid}&sectionType=${section}&organisation=${organization.title}&action=addPosition"><img
                                                     src="img/add.png">Добавить период обучения</a><br>
                                         </c:when>
                                     </c:otherwise>
@@ -137,11 +138,11 @@
                             <input type="hidden" name="${section}" value="true">
                             <c:choose>
                                 <c:when test="${section == 'EXPERIENCE'}">
-                                    <a href="resume?uuid=${resume.uuid}&section=${section}&action=newSection">Добавить
+                                    <a href="resume?uuid=${resume.uuid}&sectionType=${section}&action=newSection">Добавить
                                         организацию<img src="img/add.png"></a>
                                 </c:when>
                                 <c:when test="${section == 'EDUCATION'}">
-                                    <a href="resume?uuid=${resume.uuid}&section=${section}&action=newSection">Добавить
+                                    <a href="resume?uuid=${resume.uuid}&sectionType=${section}&action=newSection">Добавить
                                         учебное заведение<img src="img/add.png"></a>
                                 </c:when>
                             </c:choose>
