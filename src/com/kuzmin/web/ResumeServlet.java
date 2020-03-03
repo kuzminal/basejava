@@ -112,16 +112,18 @@ public class ResumeServlet extends HttpServlet {
                 return;
             case "deleteOrganisation":
                 resume = storage.get(uuid);
-                org = getOrganistion(SectionType.valueOf(request.getParameter("sectionType")), request, resume);
+                sectionType = SectionType.valueOf(request.getParameter("sectionType"));
+                org = getOrganisation(sectionType, request, resume);
                 if (org != null) {
-                    orgSect.getOrganizations().remove(org);
+                    ((OrganizationSection) resume.getSection(SectionType.valueOf(request.getParameter("sectionType")))).getOrganizations().remove(org);
                 }
                 storage.update(resume);
                 response.sendRedirect("resume?uuid=" + resume.getUuid() + "&action=edit");
                 return;
             case "deleteExperience":
                 resume = storage.get(uuid);
-                org = getOrganistion(SectionType.valueOf(request.getParameter("sectionType")), request, resume);
+                sectionType = SectionType.valueOf(request.getParameter("sectionType"));
+                org = getOrganisation(sectionType, request, resume);
                 if (org != null) {
                     for (Experience experience : org.getExperiences()) {
                         if (experience.getStartDate().equals(YearMonth.parse(request.getParameter("expstart")))
@@ -155,7 +157,8 @@ public class ResumeServlet extends HttpServlet {
                 break;
             case "addPosition":
                 resume = storage.get(uuid);
-                org = getOrganistion(SectionType.valueOf(request.getParameter("sectionType")), request, resume);
+                sectionType = SectionType.valueOf(request.getParameter("sectionType"));
+                org = getOrganisation(sectionType, request, resume);
                 url = "/WEB-INF/jsp/addPosition.jsp";
                 break;
             case "newSection":
@@ -177,7 +180,7 @@ public class ResumeServlet extends HttpServlet {
         ).forward(request, response);
     }
 
-    private Organization getOrganistion(SectionType sectionType, HttpServletRequest request, Resume resume) {
+    private Organization getOrganisation(SectionType sectionType, HttpServletRequest request, Resume resume) {
         OrganizationSection orgSec = (OrganizationSection) resume.getSection(sectionType);
         return orgSec.getOrganizations().stream().filter(o -> o.getTitle().equals(request.getParameter("organisation"))).findFirst().orElse(null);
     }
