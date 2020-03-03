@@ -232,23 +232,25 @@ public class ResumeServlet extends HttpServlet {
                         List<Organization> orgs = new ArrayList<>();
                         String[] urls = request.getParameterValues(type.name() + "url");
                         String[] descriptions = request.getParameterValues(type.name() + "description");
-                        for (int i = 0; i < parameters.length; i++) {
-                            String name = descriptions[i];
-                            if (name.length() > 0) {
-                                String[] startDates = request.getParameterValues(type.name() + i + "startDate");
-                                String[] endDates = request.getParameterValues(type.name() + i + "endDate");
-                                String[] position = request.getParameterValues(type.name() + i + "position");
-                                String[] descriptionsExp = request.getParameterValues(type.name() + i + "dscr");
-                                List<Experience> positions = new ArrayList<>();
-                                if (position.length > 0) {
-                                    for (int j = 0; j < position.length; j++) {
-                                        positions.add(new Experience(YearMonth.parse(startDates[j]), YearMonth.parse(endDates[j]), descriptionsExp[j], position[j]));
+                        if (urls != null && descriptions != null) {
+                            for (int i = 0; i < parameters.length; i++) {
+                                String name = descriptions[i];
+                                if (name.length() > 0) {
+                                    String[] startDates = request.getParameterValues(type.name() + i + "startDate");
+                                    String[] endDates = request.getParameterValues(type.name() + i + "endDate");
+                                    String[] position = request.getParameterValues(type.name() + i + "position");
+                                    String[] descriptionsExp = request.getParameterValues(type.name() + i + "dscr");
+                                    List<Experience> positions = new ArrayList<>();
+                                    if ((startDates != null && startDates.length > 0) && (endDates != null && endDates.length > 0)) {
+                                        for (int j = 0; j < position.length; j++) {
+                                            positions.add(new Experience(YearMonth.parse(startDates[j]), YearMonth.parse(endDates[j]), descriptionsExp[j], position[j]));
+                                        }
+                                        orgs.add(new Organization(name, urls[i], positions));
                                     }
                                 }
-                                orgs.add(new Organization(name, urls[i], positions));
                             }
+                            resume.addSection(type, new OrganizationSection(type, orgs));
                         }
-                        resume.addSection(type, new OrganizationSection(type, orgs));
                         break;
                     }
                 }
