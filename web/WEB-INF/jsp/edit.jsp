@@ -31,15 +31,18 @@
         </dl>
         <h3>Контакты <a href="resume?uuid=${resume.uuid}&action=newContact"><img src="img/add.png"></a></h3>
         <p>
-            <c:forEach var="type"
-                       items="<%=resume.getContacts().entrySet().stream().filter(f -> f.getValue() != null).map(Map.Entry::getKey).collect(Collectors.toList())%>">
-        <dl>
-            <dt>${type.title}</dt>
-            <dd><input type="text" name="${type.name()}" size="30" value="${resume.getContact(type)}"> <a
-                    href="resume?uuid=${resume.uuid}&contact=${type}&action=deleteContact"><img
-                    src="img/delete.png"></a></dd>
-        </dl>
-        </c:forEach>
+            <c:set var="contacts" value="${resume.contacts}"/>
+            <c:if test="${contacts != null}">
+                <c:forEach var="type"
+                           items="<%=resume.getContacts().entrySet().stream().filter(f -> f.getValue() != null).map(Map.Entry::getKey).collect(Collectors.toList())%>">
+                    <dl>
+                        <dt>${type.title}</dt>
+                        <dd><input type="text" name="${type.name()}" size="30" value="${resume.getContact(type)}"> <a
+                                href="resume?uuid=${resume.uuid}&contact=${type}&action=deleteContact"><img
+                                src="img/delete.png"></a></dd>
+                    </dl>
+                </c:forEach>
+            </c:if>
         </p>
         <h3>Секции <a href="resume?uuid=${resume.uuid}&action=addSection"><img src="img/add.png"></a></h3>
         <p>
