@@ -5,6 +5,7 @@ import com.kuzmin.exception.NotExistStorageException;
 import com.kuzmin.exception.StorageException;
 import com.kuzmin.model.*;
 import com.kuzmin.sql.SqlHelper;
+import com.kuzmin.util.GSONParser;
 import com.kuzmin.util.JSONParser;
 
 import java.sql.*;
@@ -188,38 +189,17 @@ public class SqlStorage implements Storage {
             for (Map.Entry<SectionType, AbstractSection> e : resume.getSections().entrySet()) {
                 ps.setString(1, resume.getUuid());
                 ps.setString(2, e.getKey().name());
-                ps.setString(3, JSONParser.write(e.getValue()));
+                ps.setString(3, GSONParser.write(e.getValue(), AbstractSection.class));
                 ps.addBatch();
             }
             ps.executeBatch();
-        } catch (JsonProcessingException e) {
-            throw new StorageException(e);
         }
     }
 
     private void makeSection(Resume resume, ResultSet rs, String content) throws SQLException, JsonProcessingException {
         SectionType sectionType = SectionType.valueOf(rs.getString("type"));
         if (content != null) {
-            switch (sectionType) {
-                case PERSONAL:
-                case OBJECTIVE: {
-                    TextSection textSection = JSONParser.read(content, TextSection.class);
-                    resume.addSection(sectionType, textSection);
-                    break;
-                }
-                case ACHIEVEMENT:
-                case QUALIFICATIONS: {
-                    TextListSection textSection = JSONParser.read(content, TextListSection.class);
-                    resume.addSection(sectionType, textSection);
-                    break;
-                }
-                case EXPERIENCE:
-                case EDUCATION: {
-                    OrganizationSection organizationSection = JSONParser.read(content, OrganizationSection.class);
-                    resume.addSection(sectionType, organizationSection);
-                    break;
-                }
-            }
+            resume.addSection(sectionType, GSONParser.read(content, AbstractSection.class));
         }
     }
 }

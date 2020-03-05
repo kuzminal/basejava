@@ -21,4 +21,12 @@ public class GSONParser {
     public static  <T> void write(T object, Writer writer) throws IOException {
         gson.toJson(object, writer);
     }
+
+    public static <T> T read(String content, Class<T> clazz) {
+        return gson.fromJson(content, clazz);
+    }
+
+    public static <T> String write(T object, Class<T> clazz) {
+        return gson.toJson(object, clazz);
+    }
 }

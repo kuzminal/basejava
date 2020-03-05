@@ -24,49 +24,40 @@ public class ResumeServlet extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         request.setCharacterEncoding("UTF-8");
-        String uuid = request.getParameter("uuid");
+        String uuid = request.getParameter("uuid") != null ? request.getParameter("uuid") : "";
         String fullName = request.getParameter("fullName") != null ? request.getParameter("fullName") : "";
-        String postAction = request.getParameter("postAction");
+        String postAction = request.getParameter("postAction") != null ? request.getParameter("postAction") : "";
         Resume resume;
-        if (uuid != null && postAction != null) {
+        if (uuid != null) {
+            resume = storage.get(uuid);
             switch (postAction) {
                 case "saveContact":
-                    resume = storage.get(uuid);
                     saveContact(request, resume);
-                    storage.update(resume);
-                    response.sendRedirect("resume?uuid=" + resume.getUuid() + "&action=edit");
+                    saveAndSendRedirectToEdit(resume, response);
                     return;
                 case "addSection":
-                    resume = storage.get(uuid);
                     addSection(request, resume);
-                    storage.update(resume);
-                    response.sendRedirect("resume?uuid=" + resume.getUuid() + "&action=edit");
+                    saveAndSendRedirectToEdit(resume, response);
                     return;
                 case "saveSection":
-                    resume = storage.get(uuid);
                     saveSection(request, resume);
-                    storage.update(resume);
-                    response.sendRedirect("resume?uuid=" + resume.getUuid() + "&action=edit");
+                    saveAndSendRedirectToEdit(resume, response);
                     return;
                 case "savePosition":
-                    resume = storage.get(uuid);
                     savePosition(request, resume);
-                    storage.update(resume);
-                    response.sendRedirect("resume?uuid=" + resume.getUuid() + "&action=edit");
+                    saveAndSendRedirectToEdit(resume, response);
                     return;
                 case "saveResume":
-                    resume = storage.get(uuid);
                     resume.setFullName(fullName);
                     fillContacts(request, resume);
                     fillSections(request, resume);
                     storage.update(resume);
                     break;
+                case "":
+                    response.sendRedirect("resume?uuid=" + resume.getUuid() + "&action=edit");
                 default:
                     throw new IllegalArgumentException("Action " + postAction + " is illegal");
             }
-        } else if (uuid != null) {
-            resume = storage.get(uuid);
-            response.sendRedirect("resume?uuid=" + resume.getUuid() + "&action=edit");
         } else {
             resume = new Resume(fullName);
             fillContacts(request, resume);
@@ -96,19 +87,15 @@ public class ResumeServlet extends HttpServlet {
                 return;
             case "deleteContact":
                 resume = storage.get(uuid);
-                Map<ContactType, String> contacts = resume.getContacts();
-                contacts.remove(ContactType.valueOf(request.getParameter("contact")));
-                resume.setContacts(contacts);
-                storage.update(resume);
-                response.sendRedirect("resume?uuid=" + resume.getUuid() + "&action=edit");
+                resume.removeContact(ContactType.valueOf(request.getParameter("contact")));
+                saveAndSendRedirectToEdit(resume, response);
                 return;
             case "deleteSection":
                 resume = storage.get(uuid);
                 Map<SectionType, AbstractSection> sections = resume.getSections();
                 sections.remove(SectionType.valueOf(request.getParameter("sectionType")));
                 resume.setSections(sections);
-                storage.update(resume);
-                response.sendRedirect("resume?uuid=" + resume.getUuid() + "&action=edit");
+                saveAndSendRedirectToEdit(resume, response);
                 return;
             case "deleteOrganisation":
                 resume = storage.get(uuid);
@@ -117,8 +104,7 @@ public class ResumeServlet extends HttpServlet {
                 if (org != null) {
                     ((OrganizationSection) resume.getSection(SectionType.valueOf(request.getParameter("sectionType")))).getOrganizations().remove(org);
                 }
-                storage.update(resume);
-                response.sendRedirect("resume?uuid=" + resume.getUuid() + "&action=edit");
+                saveAndSendRedirectToEdit(resume, response);
                 return;
             case "deleteExperience":
                 resume = storage.get(uuid);
@@ -136,8 +122,7 @@ public class ResumeServlet extends HttpServlet {
                         org.getExperiences().remove(exp);
                     }
                 }
-                storage.update(resume);
-                response.sendRedirect("resume?uuid=" + resume.getUuid() + "&action=edit");
+                saveAndSendRedirectToEdit(resume, response);
                 return;
             case "view":
                 url = "/WEB-INF/jsp/view.jsp";
@@ -320,5 +305,10 @@ public class ResumeServlet extends HttpServlet {
         parameters.put("description", request.getParameter("description"));
         parameters.put("url", request.getParameter("url"));
         return parameters;
+    }
+
+    private void saveAndSendRedirectToEdit(Resume resume, HttpServletResponse response) throws IOException {
+        storage.update(resume);
+        response.sendRedirect("resume?uuid=" + resume.getUuid() + "&action=edit");
     }
 }
