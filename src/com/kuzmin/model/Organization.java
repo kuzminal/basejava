@@ -91,4 +91,14 @@ public class Organization implements Serializable {
             experiences.remove(experience);
         }
     }
+
+    public boolean isEmpty() {
+        return url == null && title == null;
+    }
+
+    public void addExperience(Experience experience) {
+        if (experience != null) {
+            experiences.add(experience);
+        }
+    }
 }

@@ -109,7 +109,7 @@ public class ResumeServlet extends HttpServlet {
                                 && e.getEndDate().equals(YearMonth.parse(request.getParameter("expend")))
                                 && e.getPosition().equals(request.getParameter("position")))
                         .findFirst().orElse(new Experience());
-                org.getExperiences().remove(exp);
+                org.removeExperience(exp);
                 saveAndSendRedirectToEdit(resume, response);
                 return;
             case "view":
@@ -267,27 +267,25 @@ public class ResumeServlet extends HttpServlet {
 
     private void savePosition(HttpServletRequest request, Resume resume) {
         Map<String, String> parameters = getRequestParameters(request);
-        if (parameters.get("org") != null && parameters.get("org").trim().length() != 0) {
+        if (parameters.get("org").trim().length() != 0) {
             OrganizationSection orgSec = (OrganizationSection) resume.getSection(SectionType.valueOf(parameters.get("sectionType")));
-            Organization organisation = orgSec.getOrganizations().stream().filter(o -> o.getTitle().equals(parameters.get("org"))).findFirst().orElse(null);
-            if (organisation != null) {
-                List<Experience> experiences = organisation.getExperiences();
-                experiences.add(new Experience(YearMonth.parse(parameters.get("startDate")), YearMonth.parse(parameters.get("endDate")), parameters.get("dscr"), parameters.get("position")));
-                organisation.setExperiences(experiences);
+            Organization organisation = orgSec.getOrganizations().stream().filter(o -> o.getTitle().equals(parameters.get("org"))).findFirst().orElse(new Organization());
+            if (!organisation.isEmpty()) {
+                organisation.addExperience(new Experience(YearMonth.parse(parameters.get("startDate")), YearMonth.parse(parameters.get("endDate")), parameters.get("dscr"), parameters.get("position")));
             }
         }
     }
 
     private Map<String, String> getRequestParameters(HttpServletRequest request) {
         Map<String, String> parameters = new HashMap<>();
-        parameters.put("org", request.getParameter("org"));
-        parameters.put("sectionType", request.getParameter("sectionType"));
-        parameters.put("startDate", request.getParameter("startDate"));
-        parameters.put("endDate", request.getParameter("endDate"));
-        parameters.put("position", request.getParameter("position"));
-        parameters.put("dscr", request.getParameter("dscr"));
-        parameters.put("description", request.getParameter("description"));
-        parameters.put("url", request.getParameter("url"));
+        parameters.put("org", request.getParameter("org") != null ? request.getParameter("org") : "");
+        parameters.put("sectionType", request.getParameter("sectionType") != null ? request.getParameter("sectionType") : "");
+        parameters.put("startDate", request.getParameter("startDate") != null ? request.getParameter("startDate") : "");
+        parameters.put("endDate", request.getParameter("endDate") != null ? request.getParameter("endDate") : "");
+        parameters.put("position", request.getParameter("position") != null ? request.getParameter("position") : "");
+        parameters.put("dscr", request.getParameter("dscr") != null ? request.getParameter("dscr") : "");
+        parameters.put("description", request.getParameter("description") != null ? request.getParameter("description") : "");
+        parameters.put("url", request.getParameter("url") != null ? request.getParameter("url") : "");
         return parameters;
     }
 
