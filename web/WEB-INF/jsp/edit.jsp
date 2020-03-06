@@ -60,7 +60,7 @@
             <dd>
                 <c:if test="<%=sec != null%>">
                     <c:choose>
-                        <c:when test="<%=((OrganizationSection) sec).getOrganizations() != null && ((OrganizationSection) sec).getOrganizations().size() > 0%>">
+                        <c:when test="<%=((OrganizationSection) sec).getOrganizations().size() > 0%>">
                             <c:forEach var="organization" varStatus="index"
                                        items="<%=((OrganizationSection) sec).getOrganizations()%>">
                                 <jsp:useBean id="organization" type="com.kuzmin.model.Organization"/>

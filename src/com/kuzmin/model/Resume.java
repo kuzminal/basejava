@@ -123,6 +123,14 @@ public class Resume implements Comparable<Resume>, Serializable {
     }
 
     public void removeContact(ContactType contactType) {
-        contacts.remove(contactType);
+        if (contactType != null) {
+            contacts.remove(contactType);
+        }
+    }
+
+    public void removeSection(SectionType sectionType) {
+        if (sectionType != null) {
+            sections.remove(sectionType);
+        }
     }
 }

@@ -70,16 +70,14 @@ public class ResumeServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String uuid = request.getParameter("uuid");
         String action = request.getParameter("action");
+        SectionType sectionType = request.getParameter("sectionType") != null ? SectionType.valueOf(request.getParameter("sectionType")) : null;
         String url;
         if (action == null) {
             request.setAttribute("resumes", storage.getAllSorted());
             request.getRequestDispatcher("/WEB-INF/jsp/list.jsp").forward(request, response);
         }
         Resume resume;
-        SectionType sectionType = null;
-        OrganizationSection orgSect = null;
         Organization org = null;
-        Experience exp = null;
         switch (action) {
             case "delete":
                 storage.delete(uuid);
@@ -92,36 +90,26 @@ public class ResumeServlet extends HttpServlet {
                 return;
             case "deleteSection":
                 resume = storage.get(uuid);
-                Map<SectionType, AbstractSection> sections = resume.getSections();
-                sections.remove(SectionType.valueOf(request.getParameter("sectionType")));
-                resume.setSections(sections);
+                resume.removeSection(sectionType);
                 saveAndSendRedirectToEdit(resume, response);
                 return;
             case "deleteOrganisation":
                 resume = storage.get(uuid);
-                sectionType = SectionType.valueOf(request.getParameter("sectionType"));
                 org = getOrganisation(sectionType, request, resume);
-                if (org != null) {
-                    ((OrganizationSection) resume.getSection(SectionType.valueOf(request.getParameter("sectionType")))).getOrganizations().remove(org);
-                }
+                OrganizationSection organizationSection = (OrganizationSection) resume.getSection(sectionType);
+                organizationSection.removeOrganisation(org);
                 saveAndSendRedirectToEdit(resume, response);
                 return;
             case "deleteExperience":
                 resume = storage.get(uuid);
-                sectionType = SectionType.valueOf(request.getParameter("sectionType"));
+                Experience exp;
                 org = getOrganisation(sectionType, request, resume);
-                if (org != null) {
-                    for (Experience experience : org.getExperiences()) {
-                        if (experience.getStartDate().equals(YearMonth.parse(request.getParameter("expstart")))
-                                && experience.getEndDate().equals(YearMonth.parse(request.getParameter("expend")))
-                                && experience.getPosition().equals(request.getParameter("position"))) {
-                            exp = experience;
-                        }
-                    }
-                    if (exp != null) {
-                        org.getExperiences().remove(exp);
-                    }
-                }
+                exp = org.getExperiences().stream()
+                        .filter(e -> e.getStartDate().equals(YearMonth.parse(request.getParameter("expstart")))
+                                && e.getEndDate().equals(YearMonth.parse(request.getParameter("expend")))
+                                && e.getPosition().equals(request.getParameter("position")))
+                        .findFirst().orElse(new Experience());
+                org.getExperiences().remove(exp);
                 saveAndSendRedirectToEdit(resume, response);
                 return;
             case "view":
@@ -142,13 +130,11 @@ public class ResumeServlet extends HttpServlet {
                 break;
             case "addPosition":
                 resume = storage.get(uuid);
-                sectionType = SectionType.valueOf(request.getParameter("sectionType"));
                 org = getOrganisation(sectionType, request, resume);
                 url = "/WEB-INF/jsp/addPosition.jsp";
                 break;
             case "newSection":
                 resume = storage.get(uuid);
-                sectionType = SectionType.valueOf(request.getParameter("sectionType"));
                 url = "/WEB-INF/jsp/newSection.jsp";
                 break;
             case "newContact":
@@ -167,13 +153,13 @@ public class ResumeServlet extends HttpServlet {
 
     private Organization getOrganisation(SectionType sectionType, HttpServletRequest request, Resume resume) {
         OrganizationSection orgSec = (OrganizationSection) resume.getSection(sectionType);
-        return orgSec.getOrganizations().stream().filter(o -> o.getTitle().equals(request.getParameter("organisation"))).findFirst().orElse(null);
+        return orgSec.getOrganizations().stream().filter(o -> o.getTitle().equals(request.getParameter("organisation"))).findFirst().orElse(new Organization());
     }
 
     private void fillContacts(HttpServletRequest request, Resume resume) {
         for (ContactType type : ContactType.values()) {
-            String value = request.getParameter(type.name());
-            if (value != null && value.trim().length() != 0) {
+            String value = request.getParameter(type.name()) != null ? request.getParameter(type.name()) : "";
+            if (value.trim().length() != 0) {
                 resume.addContact(type, value);
             } else {
                 resume.getContacts().remove(type);
@@ -183,8 +169,8 @@ public class ResumeServlet extends HttpServlet {
 
     private void fillSections(HttpServletRequest request, Resume resume) {
         for (SectionType type : SectionType.values()) {
-            String value = request.getParameter(type.name());
-            if (value != null && value.trim().length() != 0) {
+            String value = request.getParameter(type.name()) != null ? request.getParameter(type.name()) : "";
+            if (value.trim().length() != 0) {
                 switch (type) {
                     case PERSONAL:
                     case OBJECTIVE: {
@@ -203,27 +189,25 @@ public class ResumeServlet extends HttpServlet {
                     case EDUCATION: {
                         String[] parameters = request.getParameterValues(type.name());
                         List<Organization> orgs = new ArrayList<>();
-                        String[] urls = request.getParameterValues(type.name() + "url");
-                        String[] descriptions = request.getParameterValues(type.name() + "description");
-                        if (urls != null && descriptions != null) {
-                            for (int i = 0; i < parameters.length; i++) {
-                                String name = descriptions[i];
-                                if (name.length() > 0) {
-                                    String[] startDates = request.getParameterValues(type.name() + i + "startDate");
-                                    String[] endDates = request.getParameterValues(type.name() + i + "endDate");
-                                    String[] position = request.getParameterValues(type.name() + i + "position");
-                                    String[] descriptionsExp = request.getParameterValues(type.name() + i + "dscr");
-                                    List<Experience> positions = new ArrayList<>();
-                                    if ((startDates != null && startDates.length > 0) && (endDates != null && endDates.length > 0)) {
-                                        for (int j = 0; j < position.length; j++) {
-                                            positions.add(new Experience(YearMonth.parse(startDates[j]), YearMonth.parse(endDates[j]), descriptionsExp[j], position[j]));
-                                        }
-                                        orgs.add(new Organization(name, urls[i], positions));
+                        String[] urls = request.getParameterValues(type.name() + "url") != null ? request.getParameterValues(type.name() + "url") : new String[]{};
+                        String[] descriptions = request.getParameterValues(type.name() + "description") != null ? request.getParameterValues(type.name() + "description") : new String[]{};
+                        for (int i = 0; i < parameters.length; i++) {
+                            String name = descriptions.length == parameters.length ? descriptions[i] : "";
+                            if (name.length() > 0) {
+                                String[] startDates = request.getParameterValues(type.name() + i + "startDate") != null ? request.getParameterValues(type.name() + i + "startDate") : new String[]{};
+                                String[] endDates = request.getParameterValues(type.name() + i + "endDate") != null ? request.getParameterValues(type.name() + i + "endDate") : new String[]{};
+                                String[] position = request.getParameterValues(type.name() + i + "position") != null ? request.getParameterValues(type.name() + i + "position") : new String[]{};
+                                String[] descriptionsExp = request.getParameterValues(type.name() + i + "dscr") != null ? request.getParameterValues(type.name() + i + "dscr") : new String[]{};
+                                List<Experience> positions = new ArrayList<>();
+                                if (startDates.length > 0 && endDates.length > 0) {
+                                    for (int j = 0; j < position.length; j++) {
+                                        positions.add(new Experience(YearMonth.parse(startDates[j]), YearMonth.parse(endDates[j]), descriptionsExp[j], position[j]));
                                     }
+                                    orgs.add(new Organization(name, urls[i], positions));
                                 }
                             }
-                            resume.addSection(type, new OrganizationSection(type, orgs));
                         }
+                        resume.addSection(type, new OrganizationSection(type, orgs));
                         break;
                     }
                 }

@@ -2,6 +2,7 @@ package com.kuzmin.model;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -10,7 +11,7 @@ public class Organization implements Serializable {
     private static final long serialVersionUID = 1L;
     private String title;
     private String url;
-    private List<Experience> experiences;
+    private List<Experience> experiences = Collections.emptyList();
 
     public Organization(String title, String url, List<Experience> experiences) {
         Objects.requireNonNull(title, "title must not be null");
@@ -44,7 +45,9 @@ public class Organization implements Serializable {
     }
 
     public void setExperiences(List<Experience> experiences) {
-        this.experiences = experiences;
+        if (experiences != null) {
+            this.experiences = experiences;
+        }
     }
 
     @Override
@@ -81,5 +84,11 @@ public class Organization implements Serializable {
             result.append("<p>").append(experience).append("</p>");
         }
         return result.toString();
+    }
+
+    public void removeExperience(Experience experience) {
+        if (experience != null) {
+            experiences.remove(experience);
+        }
     }
 }

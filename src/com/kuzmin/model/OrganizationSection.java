@@ -1,12 +1,13 @@
 package com.kuzmin.model;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
 @XmlRootElement
 public class OrganizationSection extends AbstractSection {
-    private List<Organization> organizations;
+    private List<Organization> organizations = Collections.emptyList();
 
     public OrganizationSection(SectionType sectionType, List<Organization> elements) {
         this.organizations = elements;
@@ -20,7 +21,9 @@ public class OrganizationSection extends AbstractSection {
     }
 
     public void setOrganizations(List<Organization> organizations) {
-        this.organizations = organizations;
+        if (organizations != null) {
+            this.organizations = organizations;
+        }
     }
 
     @Override
@@ -51,5 +54,11 @@ public class OrganizationSection extends AbstractSection {
             organizationsInformation.append(organization.toHTML());
         }
         return organizationsInformation.toString();
+    }
+
+    public void removeOrganisation(Organization organization) {
+        if (organization != null) {
+            organizations.remove(organization);
+        }
     }
 }
