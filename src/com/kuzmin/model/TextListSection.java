@@ -9,7 +9,7 @@ import java.util.Objects;
 public class TextListSection extends AbstractSection {
     private List<String> textInformation = Collections.emptyList();
 
-    public TextListSection(SectionType sectionType, List<String> textInformation) {
+    public TextListSection(List<String> textInformation) {
         this.textInformation = textInformation;
     }
 

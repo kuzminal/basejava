@@ -22,6 +22,7 @@ public class ResumeServlet extends HttpServlet {
         storage = Config.get().getStorage();
     }
 
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         request.setCharacterEncoding("UTF-8");
         String uuid = request.getParameter("uuid") != null ? request.getParameter("uuid") : "";
@@ -32,51 +33,46 @@ public class ResumeServlet extends HttpServlet {
             resume = storage.get(uuid);
             switch (postAction) {
                 case "saveContact":
-                    saveContact(request, resume);
-                    saveAndSendRedirectToEdit(resume, response);
+                    saveContact(request, response, resume);
                     return;
                 case "addSection":
-                    addSection(request, resume);
-                    saveAndSendRedirectToEdit(resume, response);
+                    addSection(request, response, resume);
                     return;
                 case "saveSection":
-                    saveSection(request, resume);
-                    saveAndSendRedirectToEdit(resume, response);
+                    saveSection(request, response, resume);
                     return;
                 case "savePosition":
-                    savePosition(request, resume);
-                    saveAndSendRedirectToEdit(resume, response);
+                    savePosition(request, response, resume);
                     return;
                 case "saveResume":
                     resume.setFullName(fullName);
                     fillContacts(request, resume);
                     fillSections(request, resume);
-                    storage.update(resume);
+                    if (!fullName.isEmpty()) {
+                        storage.update(resume);
+                    } else {
+                        storage.delete(uuid);
+                    }
                     break;
-                case "":
-                    response.sendRedirect("resume?uuid=" + resume.getUuid() + "&action=edit");
                 default:
                     throw new IllegalArgumentException("Action " + postAction + " is illegal");
             }
-        } else {
-            resume = new Resume(fullName);
-            fillContacts(request, resume);
-            fillSections(request, resume);
-            storage.save(resume);
         }
         response.sendRedirect("resume");
     }
 
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String uuid = request.getParameter("uuid");
         String action = request.getParameter("action");
         SectionType sectionType = request.getParameter("sectionType") != null ? SectionType.valueOf(request.getParameter("sectionType")) : null;
+        ContactType contactType = request.getParameter("contact") != null ? ContactType.valueOf(request.getParameter("contact")) : null;
         String url;
         if (action == null) {
             request.setAttribute("resumes", storage.getAllSorted());
             request.getRequestDispatcher("/WEB-INF/jsp/list.jsp").forward(request, response);
         }
-        Resume resume;
+        Resume resume = "add".equals(action) ? new Resume() : storage.get(uuid);
         Organization org = null;
         switch (action) {
             case "delete":
@@ -84,24 +80,16 @@ public class ResumeServlet extends HttpServlet {
                 response.sendRedirect("resume");
                 return;
             case "deleteContact":
-                resume = storage.get(uuid);
-                resume.removeContact(ContactType.valueOf(request.getParameter("contact")));
-                saveAndSendRedirectToEdit(resume, response);
+                deleteContact(resume, contactType, response);
                 return;
             case "deleteSection":
-                resume = storage.get(uuid);
-                resume.removeSection(sectionType);
-                saveAndSendRedirectToEdit(resume, response);
+                deleteSection(resume, sectionType, response);
                 return;
             case "deleteOrganisation":
-                resume = storage.get(uuid);
                 org = getOrganisation(sectionType, request, resume);
-                OrganizationSection organizationSection = (OrganizationSection) resume.getSection(sectionType);
-                organizationSection.removeOrganisation(org);
-                saveAndSendRedirectToEdit(resume, response);
+                deleteOrganisation(resume, sectionType, org, response);
                 return;
             case "deleteExperience":
-                resume = storage.get(uuid);
                 Experience exp;
                 org = getOrganisation(sectionType, request, resume);
                 exp = org.getExperiences().stream()
@@ -109,36 +97,29 @@ public class ResumeServlet extends HttpServlet {
                                 && e.getEndDate().equals(YearMonth.parse(request.getParameter("expend")))
                                 && e.getPosition().equals(request.getParameter("position")))
                         .findFirst().orElse(new Experience());
-                org.removeExperience(exp);
-                saveAndSendRedirectToEdit(resume, response);
+                deleteExperience(resume, org, exp, response);
                 return;
             case "view":
                 url = "/WEB-INF/jsp/view.jsp";
-                resume = storage.get(uuid);
                 break;
             case "edit":
-                resume = storage.get(uuid);
                 url = "/WEB-INF/jsp/edit.jsp";
                 break;
             case "add":
-                resume = new Resume();
+                storage.save(resume);
                 url = "/WEB-INF/jsp/edit.jsp";
                 break;
             case "addSection":
-                resume = storage.get(uuid);
                 url = "/WEB-INF/jsp/addSection.jsp";
                 break;
             case "addPosition":
-                resume = storage.get(uuid);
                 org = getOrganisation(sectionType, request, resume);
                 url = "/WEB-INF/jsp/addPosition.jsp";
                 break;
             case "newSection":
-                resume = storage.get(uuid);
                 url = "/WEB-INF/jsp/newSection.jsp";
                 break;
             case "newContact":
-                resume = storage.get(uuid);
                 url = "/WEB-INF/jsp/newContact.jsp";
                 break;
             default:
@@ -174,14 +155,14 @@ public class ResumeServlet extends HttpServlet {
                 switch (type) {
                     case PERSONAL:
                     case OBJECTIVE: {
-                        TextSection textSection = new TextSection(type, value);
+                        TextSection textSection = new TextSection(value);
                         resume.addSection(type, textSection);
                         break;
                     }
                     case ACHIEVEMENT:
                     case QUALIFICATIONS: {
                         List<String> text = Arrays.asList(value.split("/r/n"));
-                        TextListSection textSection = new TextListSection(type, text);
+                        TextListSection textSection = new TextListSection(text);
                         resume.addSection(type, textSection);
                         break;
                     }
@@ -207,7 +188,7 @@ public class ResumeServlet extends HttpServlet {
                                 }
                             }
                         }
-                        resume.addSection(type, new OrganizationSection(type, orgs));
+                        resume.addSection(type, new OrganizationSection(orgs));
                         break;
                     }
                 }
@@ -217,15 +198,16 @@ public class ResumeServlet extends HttpServlet {
         }
     }
 
-    private void saveContact(HttpServletRequest request, Resume resume) {
+    private void saveContact(HttpServletRequest request, HttpServletResponse response, Resume resume) throws IOException {
         String contactType = request.getParameter("contactType");
         String contactValue = request.getParameter("contactValue");
         if ((contactType != null && contactType.trim().length() != 0) && (contactValue != null && contactValue.trim().length() != 0)) {
             resume.addContact(ContactType.valueOf(contactType), contactValue);
         }
+        saveAndSendRedirectToEdit(resume, response);
     }
 
-    private void addSection(HttpServletRequest request, Resume resume) {
+    private void addSection(HttpServletRequest request, HttpServletResponse response, Resume resume) throws IOException {
         String sectionType = request.getParameter("sectionType");
         if (sectionType != null && sectionType.trim().length() != 0) {
             SectionType type = SectionType.valueOf(sectionType);
@@ -247,9 +229,10 @@ public class ResumeServlet extends HttpServlet {
                 }
             }
         }
+        saveAndSendRedirectToEdit(resume, response);
     }
 
-    private void saveSection(HttpServletRequest request, Resume resume) {
+    private void saveSection(HttpServletRequest request, HttpServletResponse response, Resume resume) throws IOException {
         Map<String, String> parameters = getRequestParameters(request);
         if ((parameters.get("url") != null && parameters.get("url").trim().length() != 0) && (parameters.get("description") != null && (parameters.get("description").trim().length() != 0))) {
             Organization organization = new Organization(parameters.get("description"), parameters.get("url"), new ArrayList<>());
@@ -263,9 +246,10 @@ public class ResumeServlet extends HttpServlet {
                 orgSec.setOrganizations(Collections.singletonList(organization));
             }
         }
+        saveAndSendRedirectToEdit(resume, response);
     }
 
-    private void savePosition(HttpServletRequest request, Resume resume) {
+    private void savePosition(HttpServletRequest request, HttpServletResponse response, Resume resume) throws IOException {
         Map<String, String> parameters = getRequestParameters(request);
         if (parameters.get("org").trim().length() != 0) {
             OrganizationSection orgSec = (OrganizationSection) resume.getSection(SectionType.valueOf(parameters.get("sectionType")));
@@ -274,6 +258,7 @@ public class ResumeServlet extends HttpServlet {
                 organisation.addExperience(new Experience(YearMonth.parse(parameters.get("startDate")), YearMonth.parse(parameters.get("endDate")), parameters.get("dscr"), parameters.get("position")));
             }
         }
+        saveAndSendRedirectToEdit(resume, response);
     }
 
     private Map<String, String> getRequestParameters(HttpServletRequest request) {
@@ -292,5 +277,26 @@ public class ResumeServlet extends HttpServlet {
     private void saveAndSendRedirectToEdit(Resume resume, HttpServletResponse response) throws IOException {
         storage.update(resume);
         response.sendRedirect("resume?uuid=" + resume.getUuid() + "&action=edit");
+    }
+
+    private void deleteContact(Resume resume, ContactType contactType, HttpServletResponse response) throws IOException {
+        resume.removeContact(contactType);
+        saveAndSendRedirectToEdit(resume, response);
+    }
+
+    private void deleteSection(Resume resume, SectionType sectionType, HttpServletResponse response) throws IOException {
+        resume.removeSection(sectionType);
+        saveAndSendRedirectToEdit(resume, response);
+    }
+
+    private void deleteOrganisation(Resume resume, SectionType sectionType, Organization organization, HttpServletResponse response) throws IOException {
+        OrganizationSection organizationSection = (OrganizationSection) resume.getSection(sectionType);
+        organizationSection.removeOrganisation(organization);
+        saveAndSendRedirectToEdit(resume, response);
+    }
+
+    private void deleteExperience(Resume resume, Organization organization, Experience experience, HttpServletResponse response) throws IOException {
+        organization.removeExperience(experience);
+        saveAndSendRedirectToEdit(resume, response);
     }
 }

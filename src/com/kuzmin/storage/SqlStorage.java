@@ -3,13 +3,18 @@ package com.kuzmin.storage;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.kuzmin.exception.NotExistStorageException;
 import com.kuzmin.exception.StorageException;
-import com.kuzmin.model.*;
+import com.kuzmin.model.AbstractSection;
+import com.kuzmin.model.ContactType;
+import com.kuzmin.model.Resume;
+import com.kuzmin.model.SectionType;
 import com.kuzmin.sql.SqlHelper;
 import com.kuzmin.util.GSONParser;
-import com.kuzmin.util.JSONParser;
 
 import java.sql.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class SqlStorage implements Storage {
     public final SqlHelper sqlHelper;

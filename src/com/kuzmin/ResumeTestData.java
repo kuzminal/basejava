@@ -25,21 +25,21 @@ public class ResumeTestData {
         contacts.put(ContactType.GIT, git);
         resume.setContacts(contacts);
         Map<SectionType, AbstractSection> sections = resume.getSections();
-        AbstractSection objective = new TextSection(SectionType.OBJECTIVE, "Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям");
+        AbstractSection objective = new TextSection("Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям");
         sections.put(SectionType.OBJECTIVE, objective);
-        AbstractSection personal = new TextSection(SectionType.PERSONAL, "Аналитический склад ума, сильная логика, креативность, инициативность. Пурист кода и архитектуры.");
+        AbstractSection personal = new TextSection("Аналитический склад ума, сильная логика, креативность, инициативность. Пурист кода и архитектуры.");
         sections.put(SectionType.PERSONAL, personal);
         List<String> achievements = new ArrayList<>();
         achievements.add("С 2013 года: разработка проектов \"Разработка Web приложения\",\"Java Enterprise\", \"Многомодульный maven. Многопоточность. XML (JAXB/StAX). Веб сервисы (JAX-RS/SOAP). Удаленное взаимодействие (JMS/AKKA)\". Организация онлайн стажировок и ведение проектов. Более 1000 выпускников.");
         achievements.add("Реализация двухфакторной аутентификации для онлайн платформы управления проектами Wrike. Интеграция с Twilio, DuoSecurity, Google Authenticator, Jira, Zendesk.");
         achievements.add("Налаживание процесса разработки и непрерывной интеграции ERP системы River BPM. Интеграция с 1С, Bonita BPM, CMIS, LDAP. Разработка приложения управления окружением на стеке: Scala/Play/Anorm/JQuery. Разработка SSO аутентификации и авторизации различных ERP модулей, интеграция CIFS/SMB java сервера.");
-        AbstractSection achievementsSection = new TextListSection(SectionType.ACHIEVEMENT, achievements);
+        AbstractSection achievementsSection = new TextListSection(achievements);
         sections.put(SectionType.ACHIEVEMENT, achievementsSection);
         List<String> qualifications = new ArrayList<>();
         qualifications.add("JEE AS: GlassFish (v2.1, v3), OC4J, JBoss, Tomcat, Jetty, WebLogic, WSO2");
         qualifications.add("Version control: Subversion, Git, Mercury, ClearCase, Perforce");
         qualifications.add("DB: PostgreSQL(наследование, pgplsql, PL/Python), Redis (Jedis), H2, Oracle,");
-        AbstractSection qualification = new TextListSection(SectionType.QUALIFICATIONS, qualifications);
+        AbstractSection qualification = new TextListSection(qualifications);
         sections.put(SectionType.QUALIFICATIONS, qualification);
         List<Experience> experiencesJavaOnline = new ArrayList<>();
         List<Organization> organizations = new ArrayList<>();
@@ -54,7 +54,7 @@ public class ResumeTestData {
         wrikeExperience.add(director);
         Organization seniorDeveloperOrganization = new Organization("Wrike","https://wrike.com", wrikeExperience);
         organizations.add(seniorDeveloperOrganization);
-        OrganizationSection experience = new OrganizationSection(SectionType.EXPERIENCE, organizations);
+        OrganizationSection experience = new OrganizationSection(organizations);
         sections.put(SectionType.EXPERIENCE, experience);
 
         List<Organization> educations = new ArrayList<>();
@@ -68,7 +68,7 @@ public class ResumeTestData {
         educationMPTU.add(mptuExperience);
         Organization mptu = new Organization("Заочная физико-техническая школа при МФТИ", "http://mspu.ru", educationMPTU);
         educations.add(mptu);
-        OrganizationSection education = new OrganizationSection(SectionType.EDUCATION, educations);
+        OrganizationSection education = new OrganizationSection(educations);
         sections.put(SectionType.EDUCATION, education);
 
         resume.setSections(sections);

@@ -75,7 +75,7 @@ public class DataStreamSerializer implements IOStrategy {
                 switch (sectionType) {
                     case PERSONAL:
                     case OBJECTIVE: {
-                        resume.addSection(sectionType, new TextSection(sectionType, dis.readUTF()));
+                        resume.addSection(sectionType, new TextSection(dis.readUTF()));
                         break;
                     }
                     case ACHIEVEMENT:
@@ -84,7 +84,7 @@ public class DataStreamSerializer implements IOStrategy {
                         customReadForEach(dis, () -> {
                             texts.add(dis.readUTF());
                         });
-                        resume.addSection(sectionType, new TextListSection(sectionType, texts));
+                        resume.addSection(sectionType, new TextListSection(texts));
                         break;
                     }
                     case EXPERIENCE:
@@ -116,7 +116,7 @@ public class DataStreamSerializer implements IOStrategy {
 
                             organisations.add(organization);
                         });
-                        resume.addSection(sectionType, new OrganizationSection(sectionType, organisations));
+                        resume.addSection(sectionType, new OrganizationSection(organisations));
                         break;
                     }
                 }

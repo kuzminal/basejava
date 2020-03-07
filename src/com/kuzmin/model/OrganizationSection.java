@@ -9,7 +9,7 @@ import java.util.Objects;
 public class OrganizationSection extends AbstractSection {
     private List<Organization> organizations = Collections.emptyList();
 
-    public OrganizationSection(SectionType sectionType, List<Organization> elements) {
+    public OrganizationSection(List<Organization> elements) {
         this.organizations = elements;
     }
 
